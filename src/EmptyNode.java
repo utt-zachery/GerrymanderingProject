@@ -35,7 +35,7 @@ public class EmptyNode extends Node {
 					toReturn--;
 				}
 			}
-			netScore = toReturn;
+			
 			return toReturn;
 		}
 }
