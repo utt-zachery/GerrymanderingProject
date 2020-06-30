@@ -11,6 +11,7 @@ public class Party {
 	public Party(String partyName, Color partyColor) {
 		this.partyID= PARTY_COUNT++;
 		this.partyColor = partyColor;
+		this.partyName=partyName;
 	}
 	
 	@Override

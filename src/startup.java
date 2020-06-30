@@ -24,8 +24,8 @@ public class startup {
 		Party democrat = new Party("Democratic Party", Color.blue);
 		Party republican = new Party("Republican Party", Color.red);
 		
-		CensusMap baseMap = new CensusMap(100,100);
-		int numberDistricts = 3;
+		CensusMap baseMap = new CensusMap(200,200);
+		int numberDistricts = 5;
 		
 		int demCount = 0;
 		int repCount = 0;
@@ -53,8 +53,10 @@ public class startup {
 		System.out.println("\nBeginning Phase 2: Chain building");
 		GerrymanderAgent gerry = new GerrymanderAgent(baseMap,democrat, numberDistricts);
 		gerry.buildChains();
-		//gerry.growChains();
+		gerry.growChains();
 		System.out.println("Phase 2 Completed: All chains are built");
+		
+
 	}
 
 }

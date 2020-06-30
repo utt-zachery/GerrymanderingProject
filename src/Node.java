@@ -42,7 +42,7 @@ public class Node {
 	}
 	
 	//Cost of adding this district + items in the neighborhood that help
-	public void calculateNetScore(Party winningParty) {
+	public int calculateNetScore(Party winningParty) {
 		int toReturn = 0;
 		
 		if (this.party.equals(winningParty)) {
@@ -52,7 +52,7 @@ public class Node {
 		}
 		
 		for (Node toCheck : neighborHood) {
-			if (toCheck.isInDistrict == false)
+			if (toCheck.isInDistrict == true)
 				continue;
 			
 			if (this.party.equals(toCheck.party)) {
@@ -62,6 +62,7 @@ public class Node {
 			}
 		}
 		netScore= toReturn;
+		return toReturn;
 	}
 }
 

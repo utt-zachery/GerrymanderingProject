@@ -17,6 +17,34 @@ public class Chain {
 		return this.chain.size();
 	}
 	
+	public Node findBestVoter() {
+		
+		int bestNetIndex = -1;
+		Node bestNode = null;
+		for (Node next : this.chain)
+		{
+			if (next.calculateNetScore(party) > bestNetIndex) {
+				bestNetIndex=next.calculateNetScore(party) ;
+				bestNode= next;
+			}
+		}
+		return bestNode;
+	}
+	
+	public Node findWorstVoter() {
+		
+		int worstNetIndex = Integer.MAX_VALUE;
+		Node bestNode = null;
+		for (Node next : this.chain)
+		{
+			if (next.calculateNetScore(party) < worstNetIndex) {
+				worstNetIndex=next.calculateNetScore(party) ;
+				bestNode= next;
+			}
+		}
+		return bestNode;
+	}
+
 	public Iterator<Node> getChainIterator() {
 		return chain.iterator();
 	}
