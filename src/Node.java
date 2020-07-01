@@ -10,22 +10,23 @@ public class Node {
 	protected boolean isInDistrict;
 	protected int netScore;
 	protected Chain district;
+	public int hashCode;
 	
 	//Constructor for all nodes
-	public Node (Party party, int x, int y) {
+	public Node (Party party, int x, int y, int hashCode) {
 		this.x=x;
 		this.y=y;
 		this.party = party;
+		this.hashCode=hashCode;
 		isInDistrict = false;
 		neighborHood = new ArrayList<Node>();
 	}
 	
+	public boolean isInDistrict() {
+		return isInDistrict;
+	}
 	public void addNeighbor(Node toAdd) {
 		neighborHood.add(toAdd);
-	}
-	
-	public void removeNeighbor(Node toAdd) {
-		neighborHood.remove(toAdd);
 	}
 	
 	public List<Node> getNeighbors() {
@@ -36,9 +37,6 @@ public class Node {
 		this.isInDistrict = true;
 		district.addVoter(this);
 		this.district=district;
-		for (Node toCheck : neighborHood) {
-			toCheck.removeNeighbor(this);
-		}
 	}
 	
 	//Cost of adding this district + items in the neighborhood that help
@@ -52,10 +50,10 @@ public class Node {
 		}
 		
 		for (Node toCheck : neighborHood) {
-			if (toCheck.isInDistrict == true)
+			if (toCheck.isInDistrict() == true)
 				continue;
 			
-			if (this.party.equals(toCheck.party)) {
+			if (winningParty.equals(toCheck.party)) {
 				toReturn++;
 			} else {
 				toReturn--;

@@ -1,4 +1,9 @@
 import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 public class startup {
 
@@ -19,7 +24,7 @@ public class startup {
 		
 		//7. Voter exchanges to balance each district
 		
-		
+		double votePercentage = 0.5;
 		
 		Party democrat = new Party("Democratic Party", Color.blue);
 		Party republican = new Party("Republican Party", Color.red);
@@ -32,12 +37,12 @@ public class startup {
 		for (int x=0; x < baseMap.getWidth(); x++)
 			for (int y=0; y < baseMap.getHeight(); y++) {
 				
-				int random_int = (int)(Math.random() * (2 - 1 + 1) + 2);
+				double rand = Math.random();
 				
-				if (random_int==2) {
+				if (rand<= votePercentage) {
 					baseMap.addVoter(x, y, democrat);
 					demCount++;
-				} else if (random_int==3) {
+				} else   {
 					baseMap.addVoter(x, y, republican);
 					repCount++;
 				}
@@ -53,10 +58,21 @@ public class startup {
 		System.out.println("\nBeginning Phase 2: Chain building");
 		GerrymanderAgent gerry = new GerrymanderAgent(baseMap,democrat, numberDistricts);
 		gerry.buildChains();
-		gerry.growChains();
+		Chain[] districts = gerry.growChains();
+		BufferedImage first = baseMap.drawDistrict(10);
+		for (int i=0; i < districts.length; i++)
+			first=baseMap.drawDistrict(10, districts[i],first);
+		
 		System.out.println("Phase 2 Completed: All chains are built");
 		
-
+		File outputfile = new File("districts.png");
+	 	
+	    try {
+			ImageIO.write(first, "png", outputfile);
+			System.out.println(outputfile.getAbsolutePath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
