@@ -84,6 +84,10 @@ public class MapPane extends JPanel{
 		return minorityParty;
 	}
 	
+	public Party getMajoirtyParty() {
+		return majorityParty;
+	}
+	
 	public int getZoomFactor() {
 		return this.zoomFactor;
 	}
