@@ -69,7 +69,7 @@ public class Chain {
 	public int getPartyCount() {
 		int toreturn=0;
 		for (Node n: this.chain)
-			if (n.party == this.party)
+			if (n.party.equals(this.party))
 				toreturn++;
 		return toreturn;
 	}

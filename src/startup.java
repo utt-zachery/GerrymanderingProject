@@ -1,15 +1,8 @@
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 
 public class startup {
+	public static void main(String args[]) {
 
-	public static void main(String[] args) {
-		
-		
 		//Steps for building a census map
 		
 		//1. Load in the voters in random access 		O(n)
@@ -24,55 +17,22 @@ public class startup {
 		
 		//7. Voter exchanges to balance each district
 		
-		double votePercentage = 0.5;
-		
-		Party democrat = new Party("Democratic Party", Color.blue);
-		Party republican = new Party("Republican Party", Color.red);
-		
-		CensusMap baseMap = new CensusMap(200,200);
-		int numberDistricts = 5;
-		
-		int demCount = 0;
-		int repCount = 0;
-		for (int x=0; x < baseMap.getWidth(); x++)
-			for (int y=0; y < baseMap.getHeight(); y++) {
-				
-				double rand = Math.random();
-				
-				if (rand<= votePercentage) {
-					baseMap.addVoter(x, y, democrat);
-					demCount++;
-				} else   {
-					baseMap.addVoter(x, y, republican);
-					repCount++;
-				}
-			}
-				
-		baseMap.getNeighbors();
 	
-		System.out.println("Phase 1 Completed: The Census Map is created");
-		System.out.println("Democrats: " + demCount);
-		System.out.println("Republicans: " + repCount);
-		baseMap.saveImage("output.png", 10);
 		
-		System.out.println("\nBeginning Phase 2: Chain building");
-		GerrymanderAgent gerry = new GerrymanderAgent(baseMap,democrat, numberDistricts);
-		gerry.buildChains();
-		Chain[] districts = gerry.growChains();
-		BufferedImage first = baseMap.drawDistrict(10);
-		for (int i=0; i < districts.length; i++)
-			first=baseMap.drawDistrict(10, districts[i],first);
+	
 		
-		System.out.println("Phase 2 Completed: All chains are built");
+		int censusWidth = 200;
+		int censusHeight = 200;
 		
-		File outputfile = new File("districts.png");
-	 	
-	    try {
-			ImageIO.write(first, "png", outputfile);
-			System.out.println(outputfile.getAbsolutePath());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Party democrat = new Party("Democratic Party", java.awt.Color.blue);
+		Party republican = new Party("Republican Party", java.awt.Color.red);
+	
+		CensusMap baseMap = new CensusMap(censusWidth,censusHeight);
+		JFrame gui = new GUI(baseMap,republican,democrat );
+		gui.setVisible(true);
+		
+		
+		/**
+    **/
 	}
-
 }

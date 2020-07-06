@@ -4,15 +4,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Random;
-
 import javax.imageio.ImageIO;
 
 public class CensusMap {
 
+	private static final Color COLORS[] = {new Color(239, 71, 111), new Color(255, 209, 102), new Color(6, 214, 160), new Color(17, 138, 178), new Color(7, 59, 76)};
 	private Map<Integer, Node> censusData;
 	private int width;
 	private int height;
@@ -29,6 +27,16 @@ public class CensusMap {
 	
 	public int getHeight() {
 		return this.height;
+	}
+	
+	public void buildMap(MapPane input) {
+		
+		this.censusData.clear();
+		
+		for (Map.Entry<Integer,Party> entry : input.getData().entrySet()) {
+			this.addVoter(entry.getKey() % input.getCensusMap().getWidth(), entry.getKey() / input.getCensusMap().getWidth(), entry.getValue());
+		}
+		
 	}
 	
 	public void getNeighbors() {
@@ -100,22 +108,15 @@ public class CensusMap {
 			return toSave;
 	}
 	
-	private static HashSet<Integer> tocheck = new HashSet<Integer>();
-	
-	public BufferedImage drawDistrict(int pixelScale,Chain district, BufferedImage backdrop) {
+	public BufferedImage drawDistrict(int pixelScale,Chain district, BufferedImage backdrop, int index) {
 		Graphics2D painter = backdrop.createGraphics();
 		
-			Random r = new Random();
-			painter.setPaint(new Color((int)r.nextInt(256),(int)r.nextInt(256),(int)r.nextInt(256),255));
+			painter.setPaint(COLORS[index]);
 			Iterator<Node> toIterate = district.getChainIterator();
 			while (toIterate.hasNext()) {
 				Node toDraw = toIterate.next();
 				painter.fillRect(toDraw.x*pixelScale, toDraw.y*pixelScale, pixelScale, pixelScale);
 				
-				if (tocheck.contains(toDraw.hashCode))
-					throw new RuntimeException();
-				
-				tocheck.add(toDraw.hashCode);
 			}
 			
 			return backdrop;
