@@ -54,10 +54,10 @@ public class MouseProcesser implements MouseListener, MouseMotionListener {
 		int delX = xMapped2 - xMapped1;
 		int delY = yMapped2 - yMapped1;
 		
+		double distance = Math.sqrt(Math.pow(xMapped1-xMapped2, 2) + Math.pow(yMapped1-yMapped2, 2));
 		HashSet<Point> pointCollection = new HashSet<Point>();
-		
+		if (distance > 0) {
 		double t = 0.0;
-		
 		while (t <= 1.0) {
 			
 			int newX = (int)(xMapped1 + t*delX);
@@ -68,9 +68,9 @@ public class MouseProcesser implements MouseListener, MouseMotionListener {
 				pointCollection.add(testPt);
 			}
 			
-			t=t+0.01;
+			t=t+1.0/distance;
 		}
-		
+		}
 		Iterator<Point> it = pointCollection.iterator();
 	     while(it.hasNext()){
 	    	 Point l = it.next();

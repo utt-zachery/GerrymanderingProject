@@ -15,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
@@ -303,43 +304,25 @@ public class GUI extends JFrame {
 		JButton execute = new JButton("Execute");
 		innerPane.add(execute, BorderLayout.SOUTH);
 		
+		JProgressBar executeProgress = new JProgressBar();
+		executeProgress.setMaximum(100);
+	
 		execute.addActionListener( new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
+				
+				innerPane.remove(execute);
+				innerPane.add(executeProgress, BorderLayout.SOUTH);
+				
+				execute.repaint();
+				execute.revalidate();
+				innerPane.repaint();
+				innerPane.revalidate();
+				
 				maintabs.setEnabledAt(1, false);
-				int max = 101;
-				int iterCode = 0;
-				int q =0;
-				for (JSlider iter: currentList) {
-					if (iter.getValue() < max) {
-						iterCode=q;
-						max=iter.getValue();
-					}
-					q++;
-				}
 				
-				map.buildMap(mainview);
-				int numberDistricts = 5;
-				map.getNeighbors();
-	 
-				System.out.println("\nBeginning Phase 2: Chain building");
-				GerrymanderAgent gerry = new GerrymanderAgent(map,partyList[iterCode], numberDistricts);
-				gerry.buildChains();
+				new Thread(new ExecuteListener(currentList, districtsImage, map, mainview, partyList, activeDistricts, maintabs, executeProgress, innerPane, execute)).start();;
 				
-				Chain[] districts = gerry.growChains();
-				for (Chain c : districts)
-					activeDistricts.add(c);
-				
-				BufferedImage first = map.drawDistrict(mainview.getZoomFactor());
-				for (int i=0; i < districts.length; i++)
-					first=map.drawDistrict(mainview.getZoomFactor(), districts[i],first,i);
-				
-				System.out.println("Phase 2 Completed: All chains are built");
-				
-				districtsImage.setIcon(new ImageIcon(first));
-				districtsImage.repaint();
-				districtsImage.revalidate();
-				maintabs.setEnabledAt(1, true);
 			}
 		});
 		

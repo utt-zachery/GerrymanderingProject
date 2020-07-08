@@ -56,7 +56,18 @@ public class Chain {
 	}
 	
 	public void addVoter(Node toAdd) {
-	
+		
+		String callerName = Thread.currentThread().getStackTrace()[2].getClassName();
+
+		try {
+		    Class<?> caller = Class.forName(callerName);
+		   if (!caller.equals(toAdd.getClass())) {
+			   throw new RuntimeException("addVoter must be invoked from the Node class!");
+		   }
+		} catch (ClassNotFoundException e) {
+		    e.printStackTrace();
+		}
+		
 		if (toAdd.party.equals(this.party))
 			this.netScore++;
 		else

@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
 
+import javax.swing.JProgressBar;
+
 public class GerrymanderAgent {
 	
 	protected CensusMap census;
@@ -13,14 +15,16 @@ public class GerrymanderAgent {
 	protected PriorityQueue<Chain> chains;
 	private static Comparator<Chain> singleCompPos = null;
 	private static Comparator<Chain> singleCompNeg = null;
+	private JProgressBar executeProgress;
 	
-	public GerrymanderAgent(CensusMap census, Party party, int numberOfDistricts) {
+	public GerrymanderAgent(CensusMap census, Party party, int numberOfDistricts, JProgressBar executeProgress) {
 		
 		if (singleCompPos == null) {
 			singleCompPos= new ChainComparator();
 			singleCompNeg = new ChainComparatorNegative();
 		}
 		
+		this.executeProgress=executeProgress;
 		this.numberOfDistricts=numberOfDistricts;
 		this.census = census;
 		this.party = party;
@@ -58,6 +62,9 @@ public class GerrymanderAgent {
 		}
 		int quikCount = oldCount;
 		while (quikCount < this.census.getMaxVoter()) {
+			executeProgress.setValue((int) Math.round(100 * (double)quikCount/(double)this.census.getMaxVoter()));
+			executeProgress.repaint();
+			executeProgress.revalidate();
 			doIteration(bestDistricts, worstDistricts, allDistrict);
 			quikCount = 0;
 			for (Chain c : allDistrict) {
@@ -98,6 +105,16 @@ public class GerrymanderAgent {
 		}
 	}
 	
+	private void addNeighborhoodToDistrict(Chain district, Node toAdd) {
+		
+		for (Node c : toAdd.getNeighbors()) {
+			if (c.isInDistrict() == false) {
+				c.addToDistrict(district);
+			}
+		}
+		
+	}
+	
 	private void doIteration(PriorityQueue<Chain> bestDistricts, PriorityQueue<Chain> worstDistricts, List<Chain> allDistrict) {
 
 		Chain bestChain = bestDistricts.poll();
@@ -111,38 +128,22 @@ public class GerrymanderAgent {
 		Node worst = bestChain.findWorstVoter();
 		Node best = worstChain.findBestVoter();
 		
-		
-		
 		if (bestChain.getNetScore() - worstChain.getNetScore() < 50 ) {
 			if (best != null && best.isInDistrict() == false && best.netScore>=0) {
 				best.addToDistrict(worstChain);
-					for (Node better : best.neighborHood)
-					{
-						if (better.isInDistrict() == false) {
-							better.addToDistrict(worstChain);
-						}
-					}
+				addNeighborhoodToDistrict(worstChain,best);
 			}
 		} else {
 			Node worserest = worstChain.findWorstVoter();
 			if (worserest != null && worserest.isInDistrict() == false && worserest.netScore < 0) {
 				worserest.addToDistrict(worstChain);
-				for (Node worse : worserest.neighborHood)
-				{
-					if (worse.isInDistrict() == false) {
-						worse.addToDistrict(worstChain);
-					}
-				}
+				addNeighborhoodToDistrict(worstChain,worserest);
 			}
 		}
+		
 		if (worst != null && worst.isInDistrict() == false) {
-		worst.addToDistrict(bestChain);
-		for (Node worse : worst.neighborHood)
-		{
-			if (worse.isInDistrict() == false) {
-				worse.addToDistrict(bestChain);
-			}
-		}
+			worst.addToDistrict(bestChain);
+			addNeighborhoodToDistrict(bestChain,worst);
 		}
 		
 		bestDistricts.add(bestChain);
@@ -151,6 +152,7 @@ public class GerrymanderAgent {
 		worstDistricts.add(bestChain);
 		worstDistricts.add(worstChain);
 	}
+	
 	public void buildChains() {
 		
 		int activeIndex = 0;
@@ -158,11 +160,11 @@ public class GerrymanderAgent {
 		while (activeIndex < census.getMaxVoter()) {
 			Node head = census.getVoter(activeIndex);
 			if (head != null && head.isInDistrict() == false && head.party.equals(this.party)) {
-				
 				Chain newChain = new Chain(party);
 				buildChainHelper(newChain, head);
 				chains.add(newChain);
 			}
+			
 			activeIndex++;
 		}
 	}
@@ -177,4 +179,5 @@ public class GerrymanderAgent {
 			}
 		}
 	}
+	
 }
