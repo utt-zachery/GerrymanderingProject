@@ -50,6 +50,30 @@ public class Chain {
 		}
 		return bestNode;
 	}
+	
+	public Node findBestVoterInside(){
+		int bestNetIndex = Integer.MIN_VALUE;
+		Node bestNode = null;
+		for (Node node : this.chain){
+			if (node.calculateNetScore(party) > bestNetIndex){
+				bestNetIndex = node.calculateNetScore(party);
+				bestNode = node;
+			}
+		}
+		return bestNode;
+	}
+	
+	public Node findWorstVoterInside(){
+		int worstNetIndex = Integer.MAX_VALUE;
+		Node worstNode = null;
+		for (Node node : this.chain){
+			if (node.calculateNetScore(party) < worstNetIndex){
+				worstNetIndex = node.calculateNetScore(party);
+				worstNode = node;
+			}
+		}
+		return worstNode;
+	}
 
 	public Iterator<Node> getChainIterator() {
 		return chain.iterator();
@@ -75,6 +99,10 @@ public class Chain {
 		
 		this.chain.add(toAdd);
 		
+	}
+	public void removeVoter(Node toRemove){
+		this.netScore--;
+		this.chain.remove(toRemove);
 	}
 	
 	public int getPartyCount() {
