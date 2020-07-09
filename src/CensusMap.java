@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -6,6 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
 import javax.imageio.ImageIO;
 
 public class CensusMap {
@@ -34,7 +36,7 @@ public class CensusMap {
 		this.censusData.clear();
 		
 		for (Map.Entry<Integer,Party> entry : input.getData().entrySet()) {
-			this.addVoter(entry.getKey() % input.getCensusMap().getWidth(), entry.getKey() / input.getCensusMap().getWidth(), entry.getValue());
+			this.addVoter(entry.getKey() / input.getCensusMap().getWidth(), entry.getKey() % input.getCensusMap().getWidth(), entry.getValue());
 		}
 		
 	}
@@ -98,7 +100,32 @@ public class CensusMap {
 			}
 	}
 	
-	public BufferedImage drawDistrict(int pixelScale) {
+	public static BufferedImage copyImage(BufferedImage source){
+	    BufferedImage b = new BufferedImage(source.getWidth(), source.getHeight(), source.getType());
+	    Graphics g = b.getGraphics();
+	    g.drawImage(source, 0, 0, null);
+	    g.dispose();
+	    return b;
+	}
+	
+	public BufferedImage drawEdges(BufferedImage map, int pixelScale, Chain districts) {
+		BufferedImage toReturn = copyImage(map);
+		Graphics2D painter = toReturn.createGraphics();
+		Iterator<Node> allNodes = districts.getChainIterator();
+		while (allNodes.hasNext()) {
+				Node next = allNodes.next();
+				next.detectEdge();
+				if (next.isDistrictEdge() || next.x ==0 || next.y==0 || next.x == this.width-1 || next.y == this.height - 1)
+					painter.setPaint(Color.black);
+				else
+					painter.setPaint(next.party.partyColor);
+				painter.fillRect(next.x*pixelScale, next.y*pixelScale, pixelScale, pixelScale);
+		}
+		
+		return toReturn;
+	}
+	
+	public BufferedImage drawVoters(int pixelScale) {
 		BufferedImage toSave = new BufferedImage(this.width * pixelScale, this.height * pixelScale, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D painter = toSave.createGraphics();
 			for (Map.Entry<Integer,Node> entry : censusData.entrySet()) {

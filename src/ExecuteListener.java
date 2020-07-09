@@ -23,12 +23,15 @@ public class ExecuteListener implements Runnable {
 	private JProgressBar executeProgress;
 	private JPanel innerPane;
 	private JButton executeButton;
+	private JLabel districtOveralyView;
+	BufferedImage first;
 	
 	public ExecuteListener(List<JSlider> currentList, JLabel districtsImage, CensusMap map, MapPane mainview,
 			Party[] partyList, List<Chain> activeDistricts, JTabbedPane maintabs, JProgressBar executeProgress,
-			JPanel innerPane, JButton executeButton) {
+			JPanel innerPane, JButton executeButton, JLabel districtOveralyView) {
 		
 		super();
+		this.districtOveralyView=districtOveralyView;
 		this.currentList = currentList;
 		this.districtsImage = districtsImage;
 		this.map = map;
@@ -40,8 +43,6 @@ public class ExecuteListener implements Runnable {
 		this.innerPane=innerPane;
 		this.executeButton=executeButton;
 	}
-
-
 
 	@Override
 	public void run() {
@@ -71,7 +72,8 @@ public class ExecuteListener implements Runnable {
 		for (Chain c : districts)
 			activeDistricts.add(c);
 		
-		BufferedImage first = map.drawDistrict(mainview.getZoomFactor());
+		BufferedImage first = map.drawVoters(mainview.getZoomFactor());
+		
 		for (int i=0; i < districts.length; i++)
 			first=map.drawDistrict(mainview.getZoomFactor(), districts[i],first,i);
 		
@@ -83,6 +85,9 @@ public class ExecuteListener implements Runnable {
 		districtsImage.repaint();
 		districtsImage.revalidate();
 		maintabs.setEnabledAt(1, true);
+		maintabs.setEnabledAt(2, true);
+		this.first=first;
+		districtOveralyView.setIcon(new ImageIcon(first));
 		innerPane.remove(executeProgress);
 		innerPane.add(executeButton, BorderLayout.SOUTH);
 		executeButton.repaint();

@@ -4,9 +4,12 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -31,6 +34,9 @@ public class GUI extends JFrame {
 	CensusMap map;
 	private List<Chain> activeDistricts;
 	private int mapViewer;
+	private int tabZoom3;
+	ExecuteListener el;
+	
 	
 	public GUI(final CensusMap map,Party majorityParty, Party minorityParty) {
 		this.map = map;
@@ -245,6 +251,8 @@ public class GUI extends JFrame {
 				
 			}
 		});
+		
+		
 		JScrollPane mainviewport = new JScrollPane(mainview);
 		holder.add(mainviewport, BorderLayout.CENTER);
 		
@@ -254,31 +262,32 @@ public class GUI extends JFrame {
 		final JLabel districtsImage = new JLabel();
 		
 		
-		JButton zin2 = new JButton("Zoom In");
+		
 		zout2.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				mapViewer = Math.max(mapViewer-1, 1);
-				BufferedImage first = map.drawDistrict(mapViewer);
+				BufferedImage firster = map.drawVoters(mapViewer);
 				for (int i=0; i < activeDistricts.size(); i++)
-					first=map.drawDistrict(mapViewer, activeDistricts.get(i),first,i);
+					firster=map.drawDistrict(mapViewer, activeDistricts.get(i),firster,i);
 				
-				districtsImage.setIcon(new ImageIcon(first));
+				districtsImage.setIcon(new ImageIcon(firster));
 				districtsImage.repaint();
 				districtsImage.revalidate();
 			}
 			
 		});
 		
+		JButton zin2 = new JButton("Zoom In");
 		zin2.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				mapViewer++;
-				BufferedImage first = map.drawDistrict(mapViewer);
+				el.first = map.drawVoters(mapViewer);
 				for (int i=0; i < activeDistricts.size(); i++)
-					first=map.drawDistrict(mapViewer, activeDistricts.get(i),first,i);
+					el.first=map.drawDistrict(mapViewer, activeDistricts.get(i),el.first,i);
 				
-				districtsImage.setIcon(new ImageIcon(first));
+				districtsImage.setIcon(new ImageIcon(el.first));
 				districtsImage.repaint();
 				districtsImage.revalidate();
 			}
@@ -297,8 +306,90 @@ public class GUI extends JFrame {
 	
 		districtMap.add(districtPan, BorderLayout.CENTER);
 		
+		
+		// Tab 3: District Overlay View
+			final JPanel buttonPane3 = new JPanel(new FlowLayout());
+			JButton zout3 = new JButton("Zoom Out");
+			
+			JButton zin3 = new JButton("Zoom In");
+			JButton export3 = new JButton("Export");
+			
+			JPanel tabView3 = new JPanel(new BorderLayout());
+			buttonPane3.add(zout3);
+			buttonPane3.add(zin3);
+			buttonPane3.add(export3);
+			JLabel districtOverlayView = new JLabel();
+			
+			districtOverlayView.addMouseMotionListener(new MouseMotionListener() {
+
+				@Override
+				public void mouseDragged(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mouseMoved(MouseEvent e) {
+					int mappedX = e.getX() / tabZoom3;
+					int mappedY = e.getY() / tabZoom3;
+					if (mappedX >= 0 && mappedX <  map.getWidth()) {
+					if (mappedY >= 0 && mappedY < map.getHeight()) {
+						int indexHash = mappedX + map.getWidth() * mappedY;
+						Node n = map.getVoter(indexHash);
+						
+						if (n != null) {
+							BufferedImage toDraw = map.drawEdges(el.first, tabZoom3, n.getDistrict());
+							districtOverlayView.setIcon(new ImageIcon(toDraw));
+							districtOverlayView.repaint();
+							districtOverlayView.revalidate();
+						}
+					} else {
+						districtOverlayView.setIcon(new ImageIcon(el.first));
+					}
+				} else {
+					districtOverlayView.setIcon(new ImageIcon(el.first));
+				}
+				}
+				
+			});
+			
+			JPanel paneView = new JPanel(new BorderLayout());
+			paneView.add(districtOverlayView, BorderLayout.NORTH);
+			JScrollPane districtPaner = new JScrollPane(paneView);
+			tabView3.add(buttonPane3, BorderLayout.NORTH);
+			tabView3.add(districtPaner, BorderLayout.CENTER);
+			
+			zout3.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					tabZoom3 = Math.max(1, tabZoom3-1);
+					el.first = map.drawVoters(tabZoom3);
+					for (int i=0; i < activeDistricts.size(); i++)
+						el.first=map.drawDistrict(tabZoom3, activeDistricts.get(i),el.first,i);
+					districtOverlayView.setIcon(new ImageIcon(el.first));
+					districtOverlayView.repaint();
+					districtOverlayView.revalidate();
+				}
+			});
+			
+			zin3.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					tabZoom3++;
+					el.first = map.drawVoters(tabZoom3);
+					for (int i=0; i < activeDistricts.size(); i++)
+						el.first=map.drawDistrict(tabZoom3, activeDistricts.get(i),el.first,i);
+					districtOverlayView.setIcon(new ImageIcon(el.first));
+					districtOverlayView.repaint();
+					districtOverlayView.revalidate();
+				}
+			});
+		// End Tab 3
+		
 		maintabs.addTab("Census Map", holder);
 		maintabs.addTab("Districts Map", districtMap);
+		maintabs.addTab("District-Census X-Ray", tabView3);
+		
 		innerPane.add(maintabs, BorderLayout.CENTER);
 		
 		JButton execute = new JButton("Execute");
@@ -320,8 +411,10 @@ public class GUI extends JFrame {
 				innerPane.revalidate();
 				
 				maintabs.setEnabledAt(1, false);
+				maintabs.setEnabledAt(2, false);
 				
-				new Thread(new ExecuteListener(currentList, districtsImage, map, mainview, partyList, activeDistricts, maintabs, executeProgress, innerPane, execute)).start();;
+				el = new ExecuteListener(currentList, districtsImage, map, mainview, partyList, activeDistricts, maintabs, executeProgress, innerPane, execute,districtOverlayView);
+				new Thread(el).start();;
 				
 			}
 		});
@@ -330,6 +423,7 @@ public class GUI extends JFrame {
 		this.pack();
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.mapViewer = mainview.getZoomFactor();
+		this.tabZoom3 = mainview.getZoomFactor();
 	}
 	
 	public JPanel partyFactory(Color innerColor, String partyName, List<JSlider> currentList,List<JLabel> currentLabels) {

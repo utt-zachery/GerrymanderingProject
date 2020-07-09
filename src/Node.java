@@ -11,6 +11,7 @@ public class Node {
 	protected int netScore;
 	protected Chain district;
 	public int hashCode;
+	private boolean isEdge;
 	
 	//Constructor for all nodes
 	public Node (Party party, int x, int y, int hashCode) {
@@ -22,6 +23,10 @@ public class Node {
 		neighborHood = new ArrayList<Node>();
 	}
 	
+	public Chain getDistrict() {
+		return this.district;
+	}
+	
 	public boolean isInDistrict() {
 		return isInDistrict;
 	}
@@ -31,6 +36,18 @@ public class Node {
 	
 	public List<Node> getNeighbors() {
 		return this.neighborHood;
+	}
+	
+	public boolean isDistrictEdge() {
+		return this.isEdge;
+	}
+	
+	public void detectEdge() {
+		this.isEdge = false;
+		for (Node n : this.neighborHood) {
+			if (!n.district.equals(this.district))
+				this.isEdge = true;
+		}
 	}
 	
 	public void addToDistrict(Chain district) {
