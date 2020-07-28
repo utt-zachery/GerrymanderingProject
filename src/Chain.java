@@ -102,7 +102,7 @@ public class Chain {
 	}
 	public void removeVoter(Node toRemove){
 		
-		if(toRemove.partty.equals(this.party)
+		if(toRemove.party.equals(this.party))
 			this.netScore--;
 		this.chain.remove(toRemove);
 	}
