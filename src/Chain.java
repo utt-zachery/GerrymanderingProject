@@ -12,6 +12,40 @@ public class Chain {
 		netScore = 0;
 		this.chain = new LinkedList<Node>();
 	}
+
+	public double getRatio(){
+		return (double) this.getPartyCount() / this.getSize();
+	}
+	
+	public Node findMostNeutralVoter(){
+		int max  = Integer.MAX_VALUE;
+		Node neutral = null;
+
+		for (Node inChain : this.chain){
+			for (Node outChain : inChain.neighborHood){
+				if (!outChain.isInDistrict && Math.abs(outChain.calculateNetScore(party)) < max){
+					max = Math.abs(outChain.calculateNetScore(party));
+					neutral = outChain;
+				}
+			}
+		}
+		return neutral;
+	}
+	public Node findNeutral(){
+
+		Node neutral = null;
+
+		for (Node inChain : this.chain){
+			for (Node outChain : inChain.neighborHood){
+				if (!outChain.isInDistrict && outChain.calculateNetScore(party) == 0){
+
+					neutral = outChain;
+				}
+			}
+		}
+		return neutral;
+	}
+
 	
 	public int getSize() {
 		return this.chain.size();
@@ -100,10 +134,15 @@ public class Chain {
 		this.chain.add(toAdd);
 		
 	}
+
 	public void removeVoter(Node toRemove){
 		
 		if(toRemove.party.equals(this.party))
 			this.netScore--;
+		else
+			this.netScore++;
+		toRemove.district = null;
+		toRemove.isInDistrict = false;
 		this.chain.remove(toRemove);
 	}
 	
@@ -114,6 +153,7 @@ public class Chain {
 				toreturn++;
 		return toreturn;
 	}
+
 	public int getNetScore() {
 		return this.netScore;
 	}
