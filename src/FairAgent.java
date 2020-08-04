@@ -9,7 +9,7 @@ public class FairAgent {
 
     protected CensusMap census;
     private Party party;
-
+    private Party majorityParty;
     private int numberOfDistricts;
 
     private int majorityDistrictNum;
@@ -41,10 +41,12 @@ public class FairAgent {
         if (percentParty >= .5){
             oppositionDistrictNum = (int) Math.ceil(percentOpposition* numberOfDistricts);
             majorityDistrictNum = numberOfDistricts - oppositionDistrictNum;
+            majorityParty = party;
         }
         else { // else if perecent party is the minority, use percent party to assign number of opposition districts
             oppositionDistrictNum = (int) Math.ceil(percentParty * numberOfDistricts);
             majorityDistrictNum = numberOfDistricts - oppositionDistrictNum;
+            majorityParty = null;
         }
 
         if (singleCompPos == null){
@@ -134,7 +136,14 @@ public class FairAgent {
 
     private void oppositionGrowth(PriorityQueue<Chain> opposition){
         for (Chain chain : opposition){
-            Node voter = chain.findWorstVoter(); //find the worst voter from the perspective of the party given
+            Node voter = null;
+            if (majorityParty != null && majorityParty.equals(party)){
+                voter = chain.findWorstVoter();
+            }
+            else{
+                voter = chain.findBestVoter();
+            }
+             //find the worst voter from the perspective of the majority party
             //add it and its neighbors if it is available and, at least 6 of its neighbors are available
             //this is to try an avoid districts from creating skinny off-shoots and make them more contiguous
             if (voter != null && !voter.isInDistrict ){
@@ -152,7 +161,16 @@ public class FairAgent {
 
     private void majorityGrowth(PriorityQueue<Chain> majority){
         for (Chain chain : majority){
-            Node voter = chain.findBestVoter();//find the best voter from the perspective of the party given
+            Node voter = null;
+            if (majorityParty != null && majorityParty.equals(party)){
+                voter = chain.findBestVoter();
+
+            }
+            else{
+
+                voter = chain.findWorstVoter();
+            }
+            //find the best voter from the perspective of the party given
             //add it and its neighbors if it is available and, at least 6 of its neighbors are available
             //this is to try an avoid districts from creating skinny off-shoots and make them more contiguous
             if (voter != null && !voter.isInDistrict){
