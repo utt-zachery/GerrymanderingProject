@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 public class CensusMap {
 
 	private static final Color COLORS[] = {new Color(239, 71, 111), new Color(255, 209, 102), new Color(6, 214, 160), new Color(17, 138, 178), new Color(7, 59, 76)};
+	private static final Color COLORS2[] = {new Color(0, 0, 128), new Color(0, 128, 128), new Color(0, 130, 200), new Color(128, 0, 0), new Color(128, 128, 0), new Color(128, 128, 128), new Color(145, 30, 180), new Color(170, 110, 40), new Color(170, 255, 195), new Color(210, 245, 60), new Color(220, 190, 255), new Color(230, 25, 75), new Color(240, 50, 230), new Color(245, 130, 48), new Color(250, 190, 212), new Color(255, 215, 180), new Color(255, 225, 25), new Color(255, 250, 200), new Color(255, 255, 255), new Color(60, 180, 75), new Color(70, 240, 240)};
 	private Map<Integer, Node> censusData;
 	private int width;
 	private int height;
@@ -135,10 +136,13 @@ public class CensusMap {
 			return toSave;
 	}
 	
-	public BufferedImage drawDistrict(int pixelScale,Chain district, BufferedImage backdrop, int index) {
+	public BufferedImage drawDistrict(int pixelScale,Chain district, BufferedImage backdrop, int index, boolean goodColors) {
 		Graphics2D painter = backdrop.createGraphics();
 		
+		if (goodColors)
 			painter.setPaint(COLORS[index]);
+		else
+			painter.setPaint(COLORS2[index]);
 			Iterator<Node> toIterate = district.getChainIterator();
 			while (toIterate.hasNext()) {
 				Node toDraw = toIterate.next();

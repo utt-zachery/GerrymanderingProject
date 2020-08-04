@@ -9,6 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JSlider;
+import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 
 public class ExecuteListener implements Runnable {
@@ -24,11 +25,13 @@ public class ExecuteListener implements Runnable {
 	private JPanel innerPane;
 	private JButton executeButton;
 	private JLabel districtOveralyView;
+	private List<JSpinner> districtSelection;
+	
 	BufferedImage first;
 	
 	public ExecuteListener(List<JSlider> currentList, JLabel districtsImage, CensusMap map, MapPane mainview,
 			Party[] partyList, List<Chain> activeDistricts, JTabbedPane maintabs, JProgressBar executeProgress,
-			JPanel innerPane, JButton executeButton, JLabel districtOveralyView) {
+			JPanel innerPane, JButton executeButton, JLabel districtOveralyView, List<JSpinner> districtSelection) {
 		
 		super();
 		this.districtOveralyView=districtOveralyView;
@@ -42,6 +45,7 @@ public class ExecuteListener implements Runnable {
 		this.executeProgress = executeProgress;
 		this.innerPane=innerPane;
 		this.executeButton=executeButton;
+		this.districtSelection = districtSelection;
 	}
 
 	@Override
@@ -62,14 +66,11 @@ public class ExecuteListener implements Runnable {
 		
 		int otherIndex = (iterCode ==0) ? 1:0;
 		
-		//TODO: Set GUI to change this value
-		int numberDistricts = 5;
 		map.getNeighbors();
 
-		//TODO: update this so its not hard coded
 		PartyDistricts[] districtHolder = new PartyDistricts[2];
-		districtHolder[0] = new PartyDistricts(partyList[iterCode], 4);
-		districtHolder[1] = new PartyDistricts(partyList[otherIndex], numberDistricts-4);
+		districtHolder[0] = new PartyDistricts(partyList[iterCode], (int)districtSelection.get(iterCode).getValue());
+		districtHolder[1] = new PartyDistricts(partyList[otherIndex],  (int)districtSelection.get(otherIndex).getValue());
 		
 		
 		System.out.println("\nBeginning Phase 2: Chain building");
@@ -85,7 +86,7 @@ public class ExecuteListener implements Runnable {
 		BufferedImage first = map.drawVoters(mainview.getZoomFactor());
 		
 		for (int i=0; i < districts.length; i++)
-			first=map.drawDistrict(mainview.getZoomFactor(), districts[i],first,i);
+			first=map.drawDistrict(mainview.getZoomFactor(), districts[i],first,i, districtHolder[0].numDistricts + districtHolder[1].numDistricts <= 5);
 		
 		System.out.println("Phase 2 Completed: All chains are built");
 		

@@ -21,8 +21,11 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
+import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -55,9 +58,10 @@ public class GUI extends JFrame {
 		
 		final List<JSlider> currentList = new ArrayList<JSlider>();
 		final List<JLabel> currentLabels = new ArrayList<JLabel>();
+		final List<JSpinner> districtSelection = new ArrayList<JSpinner>();
 		
-		mainpane.add(partyFactory(majorityParty.partyColor, majorityParty.partyName, currentList,currentLabels));
-		mainpane.add(partyFactory(minorityParty.partyColor, minorityParty.partyName, currentList,currentLabels));
+		mainpane.add(partyFactory(majorityParty.partyColor, majorityParty.partyName, currentList,currentLabels, districtSelection));
+		mainpane.add(partyFactory(minorityParty.partyColor, minorityParty.partyName, currentList,currentLabels, districtSelection));
 		
 		
 		
@@ -269,7 +273,7 @@ public class GUI extends JFrame {
 				mapViewer = Math.max(mapViewer-1, 1);
 				BufferedImage firster = map.drawVoters(mapViewer);
 				for (int i=0; i < activeDistricts.size(); i++)
-					firster=map.drawDistrict(mapViewer, activeDistricts.get(i),firster,i);
+					firster=map.drawDistrict(mapViewer, activeDistricts.get(i),firster,i, (int)districtSelection.get(0).getValue() + (int)districtSelection.get(1).getValue()<=5);
 				
 				districtsImage.setIcon(new ImageIcon(firster));
 				districtsImage.repaint();
@@ -285,7 +289,7 @@ public class GUI extends JFrame {
 				mapViewer++;
 				el.first = map.drawVoters(mapViewer);
 				for (int i=0; i < activeDistricts.size(); i++)
-					el.first=map.drawDistrict(mapViewer, activeDistricts.get(i),el.first,i);
+					el.first=map.drawDistrict(mapViewer, activeDistricts.get(i),el.first,i, (int)districtSelection.get(0).getValue() + (int)districtSelection.get(1).getValue()<=5);
 				
 				districtsImage.setIcon(new ImageIcon(el.first));
 				districtsImage.repaint();
@@ -365,7 +369,7 @@ public class GUI extends JFrame {
 					tabZoom3 = Math.max(1, tabZoom3-1);
 					el.first = map.drawVoters(tabZoom3);
 					for (int i=0; i < activeDistricts.size(); i++)
-						el.first=map.drawDistrict(tabZoom3, activeDistricts.get(i),el.first,i);
+						el.first=map.drawDistrict(tabZoom3, activeDistricts.get(i),el.first,i,(int)districtSelection.get(0).getValue() + (int)districtSelection.get(1).getValue()<=5);
 					districtOverlayView.setIcon(new ImageIcon(el.first));
 					districtOverlayView.repaint();
 					districtOverlayView.revalidate();
@@ -378,7 +382,7 @@ public class GUI extends JFrame {
 					tabZoom3++;
 					el.first = map.drawVoters(tabZoom3);
 					for (int i=0; i < activeDistricts.size(); i++)
-						el.first=map.drawDistrict(tabZoom3, activeDistricts.get(i),el.first,i);
+						el.first=map.drawDistrict(tabZoom3, activeDistricts.get(i),el.first,i,(int)districtSelection.get(0).getValue() + (int)districtSelection.get(1).getValue()<=5);
 					districtOverlayView.setIcon(new ImageIcon(el.first));
 					districtOverlayView.repaint();
 					districtOverlayView.revalidate();
@@ -413,7 +417,7 @@ public class GUI extends JFrame {
 				maintabs.setEnabledAt(1, false);
 				maintabs.setEnabledAt(2, false);
 				
-				el = new ExecuteListener(currentList, districtsImage, map, mainview, partyList, activeDistricts, maintabs, executeProgress, innerPane, execute,districtOverlayView);
+				el = new ExecuteListener(currentList, districtsImage, map, mainview, partyList, activeDistricts, maintabs, executeProgress, innerPane, execute,districtOverlayView, districtSelection);
 				new Thread(el).start();;
 				
 			}
@@ -426,7 +430,7 @@ public class GUI extends JFrame {
 		this.tabZoom3 = mainview.getZoomFactor();
 	}
 	
-	public JPanel partyFactory(Color innerColor, String partyName, List<JSlider> currentList,List<JLabel> currentLabels) {
+	public JPanel partyFactory(Color innerColor, String partyName, List<JSlider> currentList,List<JLabel> currentLabels, List<JSpinner> districtSelection) {
 		JPanel party1Holder = new JPanel();
 		BoxLayout party1 = new BoxLayout(party1Holder, BoxLayout.X_AXIS);
 		party1Holder.setLayout(party1);
@@ -440,6 +444,20 @@ public class GUI extends JFrame {
 		colorChooser.setBorder(BorderFactory.createLineBorder(Color.black,2));
 		party1Holder.add((Box.createRigidArea(new Dimension(5, 0))));
 		party1Holder.add(colorChooser);
+		
+		JPanel districtChooser = new JPanel();
+		BoxLayout b2 = new BoxLayout(districtChooser, BoxLayout.X_AXIS);
+		districtChooser.add(Box.createHorizontalStrut(5));
+		districtChooser.setLayout(b2);
+		
+		SpinnerModel sm = new SpinnerNumberModel(0, 0, 9, 1);
+		JSpinner s = new JSpinner(sm); 
+		districtSelection.add(s);
+		districtChooser.add(new JLabel("Districts To Win: "));
+		districtChooser.add(s);
+		districtChooser.add(Box.createHorizontalStrut(5));
+		party1Holder.add(districtChooser);
+		
 		JSlider p1 = new JSlider();
 		
 		p1.setMaximum(100);
@@ -451,7 +469,6 @@ public class GUI extends JFrame {
 		currentList.add(p1);
 		
 		JPanel totalPane = new JPanel(new FlowLayout());
-		
 		
 		JLabel totalProportion = new JLabel("50%",SwingConstants.CENTER);
 		totalPane.add(totalProportion);
