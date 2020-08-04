@@ -59,14 +59,24 @@ public class ExecuteListener implements Runnable {
 		}
 		
 		map.buildMap(mainview);
+		
+		int otherIndex = (iterCode ==0) ? 1:0;
+		
+		//TODO: Set GUI to change this value
 		int numberDistricts = 5;
 		map.getNeighbors();
 
-		System.out.println("\nBeginning Phase 2: Chain building");
-		GerrymanderAgent gerry = new GerrymanderAgent(map,partyList[iterCode], numberDistricts, this.executeProgress);
-		gerry.buildChains();
+		//TODO: update this so its not hard coded
+		PartyDistricts[] districtHolder = new PartyDistricts[2];
+		districtHolder[0] = new PartyDistricts(partyList[iterCode], 4);
+		districtHolder[1] = new PartyDistricts(partyList[otherIndex], numberDistricts-4);
 		
-		Chain[] districts = gerry.growChains();
+		
+		System.out.println("\nBeginning Phase 2: Chain building");
+		GerrymanderAgent gerry = new GerrymanderAgent(map,this.executeProgress);
+		gerry.buildChains(districtHolder);
+		
+		Chain[] districts = gerry.growChains(districtHolder);
 		
 		this.activeDistricts.clear();
 		for (Chain c : districts)
