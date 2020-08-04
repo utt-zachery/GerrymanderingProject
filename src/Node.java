@@ -55,7 +55,16 @@ public class Node {
 		district.addVoter(this);
 		this.district=district;
 	}
-	
+	public int availableNeighborCount(){ // return the number of nodes in the given node's neighbor that can be added to the district 
+		//or are already in the node's district
+		int numAvailable = 0;
+		for (Node neighbor : this.neighborHood){
+			if (neighbor != null && (!neighbor.isInDistrict || neighbor.district == this.district)){
+				numAvailable++;
+			}
+		}
+		return numAvailable;
+	}
 	//Cost of adding this district + items in the neighborhood that help
 	public int calculateNetScore(Party winningParty) {
 		int toReturn = 0;
