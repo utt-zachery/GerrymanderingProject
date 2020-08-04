@@ -113,7 +113,7 @@ public class FairAgent {
         Chain[] toReturn  = new Chain[numberOfDistricts];
         for (int i = 0; i < numberOfDistricts; i++){
             toReturn[i] = allDistricts.get(i);
-            System.out.println(allDistricts.get(i).getSize() + "  "  + allDistricts.get(i).getRatio());
+            
         }
         return  toReturn;
     }
