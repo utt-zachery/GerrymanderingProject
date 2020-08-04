@@ -12,11 +12,11 @@ public class Chain {
 		netScore = 0;
 		this.chain = new LinkedList<Node>();
 	}
-
+	//returns percentage of voter within district that are the districts party
 	public double getRatio(){
 		return (double) this.getPartyCount() / this.getSize();
 	}
-	
+	//returns voter who's net score is closest to 0 and is avaiable to add 
 	public Node findMostNeutralVoter(){
 		int max  = Integer.MAX_VALUE;
 		Node neutral = null;
@@ -31,6 +31,7 @@ public class Chain {
 		}
 		return neutral;
 	}
+	//returns voter who's net score is 0 and 
 	public Node findNeutral(){
 
 		Node neutral = null;
@@ -50,7 +51,7 @@ public class Chain {
 	public int getSize() {
 		return this.chain.size();
 	}
-	
+	//returns a voter with the highest net score available
 	public Node findBestVoter() {
 		
 		int bestNetIndex = Integer.MIN_VALUE;
@@ -67,7 +68,7 @@ public class Chain {
 		}
 		return bestNode;
 	}
-	
+	//returns a voter with the lowest net score available
 	public Node findWorstVoter() {
 		
 		int worstNetIndex = Integer.MAX_VALUE;
@@ -85,34 +86,11 @@ public class Chain {
 		return bestNode;
 	}
 	
-	public Node findBestVoterInside(){
-		int bestNetIndex = Integer.MIN_VALUE;
-		Node bestNode = null;
-		for (Node node : this.chain){
-			if (node.calculateNetScore(party) > bestNetIndex){
-				bestNetIndex = node.calculateNetScore(party);
-				bestNode = node;
-			}
-		}
-		return bestNode;
-	}
 	
-	public Node findWorstVoterInside(){
-		int worstNetIndex = Integer.MAX_VALUE;
-		Node worstNode = null;
-		for (Node node : this.chain){
-			if (node.calculateNetScore(party) < worstNetIndex){
-				worstNetIndex = node.calculateNetScore(party);
-				worstNode = node;
-			}
-		}
-		return worstNode;
-	}
-
 	public Iterator<Node> getChainIterator() {
 		return chain.iterator();
 	}
-	
+	//adds voter to chain
 	public void addVoter(Node toAdd) {
 		
 		String callerName = Thread.currentThread().getStackTrace()[2].getClassName();
@@ -134,18 +112,9 @@ public class Chain {
 		this.chain.add(toAdd);
 		
 	}
-
-	public void removeVoter(Node toRemove){
-		
-		if(toRemove.party.equals(this.party))
-			this.netScore--;
-		else
-			this.netScore++;
-		toRemove.district = null;
-		toRemove.isInDistrict = false;
-		this.chain.remove(toRemove);
-	}
 	
+	
+	//returns number of voters with the same party as the district
 	public int getPartyCount() {
 		int toreturn=0;
 		for (Node n: this.chain)
@@ -153,7 +122,7 @@ public class Chain {
 				toreturn++;
 		return toreturn;
 	}
-
+	
 	public int getNetScore() {
 		return this.netScore;
 	}
