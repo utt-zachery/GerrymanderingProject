@@ -41,11 +41,11 @@ public class PartyDistricts {
 		
 		while (chains.isEmpty() == false)
 		{
-			Iterator<Node> todelete = chains.poll().getChainIterator();
+			Iterator<AbstractNode> todelete = chains.poll().getChainIterator();
 			while (todelete.hasNext()) {
-				Node tofree= todelete.next();
-				tofree.district = null;
-				tofree.isInDistrict = false;
+				AbstractNode tofree= todelete.next();
+				tofree.divorceDistrict();
+				
 			}
 		}
 	}

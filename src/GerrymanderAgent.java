@@ -57,11 +57,11 @@ public class GerrymanderAgent {
 
 		for (Chain c: allDistricts) {
 		
-		Node best = c.findBestVoter();
+		AbstractNode best = c.findBestVoter();
 		if (best == null)
 			continue;
 		best.addToDistrict(c);
-		for (Node better : best.neighborHood)
+		for (AbstractNode better : best.getNeighbors())
 		{
 			if (better.isInDistrict() == false) {
 				better.addToDistrict(c);
@@ -71,9 +71,9 @@ public class GerrymanderAgent {
 		}
 	}
 	
-	private void addNeighborhoodToDistrict(Chain district, Node toAdd) {
+	private void addNeighborhoodToDistrict(Chain district, AbstractNode toAdd) {
 		
-		for (Node c : toAdd.getNeighbors()) {
+		for (AbstractNode c : toAdd.getNeighbors()) {
 			if (c.isInDistrict() == false) {
 				c.addToDistrict(district);
 			}
@@ -93,8 +93,8 @@ public class GerrymanderAgent {
 		Chain worstChain = currentChains.worstDistricts.poll();
 		currentChains.bestDistricts.remove(worstChain);
 		
-		Node worst = bestChain.findWorstVoter();
-		Node best = worstChain.findBestVoter();
+		AbstractNode worst = bestChain.findWorstVoter();
+		AbstractNode best = worstChain.findBestVoter();
 		
 			if (best != null && best.isInDistrict() == false ) {
 				best.addToDistrict(worstChain);
@@ -114,7 +114,7 @@ public class GerrymanderAgent {
 		currentChains.worstDistricts.add(worstChain);
 		} else {
 			Chain bestChain = currentChains.bestDistricts.peek();
-			Node best = bestChain.findBestVoter();
+			AbstractNode best = bestChain.findBestVoter();
 			if (best != null && best.isInDistrict() == false && bestChain.getSize() < 1.25*(double)census.getMaxVoter() / (double)totalDistricts ) {
 				best.addToDistrict(bestChain);
 				addNeighborhoodToDistrict(bestChain,best);
@@ -127,10 +127,10 @@ public class GerrymanderAgent {
 		int activeIndex = 0;
 		
 		while (activeIndex < census.getMaxVoter()) {
-			Node head = census.getVoter(activeIndex);
+			AbstractNode head = census.getVoter(activeIndex);
 			if (head != null && head.isInDistrict() == false) {
 				
-				if (head.party.equals(districtHolder[0].districtParty)) {
+				if (head.getParty().equals(districtHolder[0].districtParty)) {
 					Chain newChain = new Chain(districtHolder[0].districtParty);
 					buildChainHelper(newChain, head, districtHolder[0].districtParty, districtHolder[0].numDistricts + districtHolder[1].numDistricts);
 					districtHolder[0].chains.add(newChain);
@@ -145,12 +145,12 @@ public class GerrymanderAgent {
 		}
 	}
 	
-	private void buildChainHelper(Chain activeChain, Node activeNode, Party activeParty, int totalDistricts) {
+	private void buildChainHelper(Chain activeChain, AbstractNode activeNode, Party activeParty, int totalDistricts) {
 
-		if (activeNode.isInDistrict() == false && activeNode.party.equals(activeParty) && activeChain.getSize() < (double)census.getMaxVoter() / (2.0 * (double)totalDistricts)) {
+		if (activeNode.isInDistrict() == false && activeNode.getParty().equals(activeParty) && activeChain.getSize() < (double)census.getMaxVoter() / (2.0 * (double)totalDistricts)) {
 			activeNode.addToDistrict(activeChain);
 		
-			for (Node activeNeighborhood : activeNode.getNeighbors()) {
+			for (AbstractNode activeNeighborhood : activeNode.getNeighbors()) {
 				buildChainHelper(activeChain, activeNeighborhood, activeParty, totalDistricts);
 			}
 		}

@@ -28,6 +28,7 @@ public class ExecuteListener implements Runnable {
 	private List<JSpinner> districtSelection;
 	
 	BufferedImage first;
+	BufferedImage second;
 	
 	public ExecuteListener(List<JSlider> currentList, JLabel districtsImage, CensusMap map, MapPane mainview,
 			Party[] partyList, List<Chain> activeDistricts, JTabbedPane maintabs, JProgressBar executeProgress,
@@ -84,9 +85,12 @@ public class ExecuteListener implements Runnable {
 			activeDistricts.add(c);
 		
 		BufferedImage first = map.drawVoters(mainview.getZoomFactor());
+		BufferedImage second = map.drawVoters(mainview.getZoomFactor());
 		
-		for (int i=0; i < districts.length; i++)
+		for (int i=0; i < districts.length; i++) {
 			first=map.drawDistrict(mainview.getZoomFactor(), districts[i],first,i, districtHolder[0].numDistricts + districtHolder[1].numDistricts <= 5);
+			second=map.drawDistrict(mainview.getZoomFactor(), districts[i],second,i, districtHolder[0].numDistricts + districtHolder[1].numDistricts <= 5);
+		}
 		
 		System.out.println("Phase 2 Completed: All chains are built");
 		
@@ -98,6 +102,7 @@ public class ExecuteListener implements Runnable {
 		maintabs.setEnabledAt(1, true);
 		maintabs.setEnabledAt(2, true);
 		this.first=first;
+		this.second = second;
 		districtOveralyView.setIcon(new ImageIcon(first));
 		innerPane.remove(executeProgress);
 		innerPane.add(executeButton, BorderLayout.SOUTH);

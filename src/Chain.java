@@ -3,27 +3,27 @@ import java.util.LinkedList;
 
 public class Chain {
 
-	private LinkedList<Node> chain;
+	private LinkedList<AbstractNode> chain;
 	private int netScore;
 	private Party party;
 	
 	public Chain(Party party) {
 		this.party=party;
 		netScore = 0;
-		this.chain = new LinkedList<Node>();
+		this.chain = new LinkedList<AbstractNode>();
 	}
 	
 	public int getSize() {
 		return this.chain.size();
 	}
 	
-	public Node findBestVoter() {
+	public AbstractNode findBestVoter() {
 		
 		int bestNetIndex = Integer.MIN_VALUE;
-		Node bestNode = null;
-		for (Node pre : this.chain)
+		AbstractNode bestNode = null;
+		for (AbstractNode pre : this.chain)
 		{
-			for (Node next : pre.neighborHood)
+			for (AbstractNode next : pre.getNeighbors())
 			{
 				if (next.isInDistrict() == false && next.calculateNetScore(party) > bestNetIndex) {
 					bestNetIndex=next.calculateNetScore(party) ;
@@ -34,13 +34,13 @@ public class Chain {
 		return bestNode;
 	}
 	
-	public Node findWorstVoter() {
+	public AbstractNode findWorstVoter() {
 		
 		int worstNetIndex = Integer.MAX_VALUE;
-		Node bestNode = null;
-		for (Node pre : this.chain)
+		AbstractNode bestNode = null;
+		for (AbstractNode pre : this.chain)
 		{
-			for (Node next : pre.neighborHood)
+			for (AbstractNode next : pre.getNeighbors())
 			{
 				if (next.isInDistrict() == false && next.calculateNetScore(party) < worstNetIndex) {
 					worstNetIndex=next.calculateNetScore(party) ;
@@ -51,24 +51,15 @@ public class Chain {
 		return bestNode;
 	}
 
-	public Iterator<Node> getChainIterator() {
+	public Iterator<AbstractNode> getChainIterator() {
 		return chain.iterator();
 	}
 	
-	public void addVoter(Node toAdd) {
+	// IMPORTANT: Should be invoked by the NODE class ONLY through DOUBLE DISPATCH
+	// There are no checks for this to allow for inheritance of the Node class
+	public void addVoter(AbstractNode toAdd) {
 		
-		String callerName = Thread.currentThread().getStackTrace()[2].getClassName();
-
-		try {
-		    Class<?> caller = Class.forName(callerName);
-		   if (!caller.equals(toAdd.getClass())) {
-			   throw new RuntimeException("addVoter must be invoked from the Node class!");
-		   }
-		} catch (ClassNotFoundException e) {
-		    e.printStackTrace();
-		}
-		
-		if (toAdd.party.equals(this.party))
+		if (toAdd.getParty().equals(this.party))
 			this.netScore++;
 		else
 			this.netScore--;
@@ -79,8 +70,8 @@ public class Chain {
 	
 	public int getPartyCount() {
 		int toreturn=0;
-		for (Node n: this.chain)
-			if (n.party.equals(this.party))
+		for (AbstractNode n: this.chain)
+			if (n.getParty().equals(this.party))
 				toreturn++;
 		return toreturn;
 	}

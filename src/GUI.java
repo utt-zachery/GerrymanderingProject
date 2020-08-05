@@ -339,19 +339,19 @@ public class GUI extends JFrame {
 					if (mappedX >= 0 && mappedX <  map.getWidth()) {
 					if (mappedY >= 0 && mappedY < map.getHeight()) {
 						int indexHash = mappedX + map.getWidth() * mappedY;
-						Node n = map.getVoter(indexHash);
+						AbstractNode n = map.getVoter(indexHash);
 						
 						if (n != null) {
-							BufferedImage toDraw = map.drawEdges(el.first, tabZoom3, n.getDistrict());
+							BufferedImage toDraw = map.drawEdges(el.second, tabZoom3, n.getDistrict());
 							districtOverlayView.setIcon(new ImageIcon(toDraw));
 							districtOverlayView.repaint();
 							districtOverlayView.revalidate();
 						}
 					} else {
-						districtOverlayView.setIcon(new ImageIcon(el.first));
+						districtOverlayView.setIcon(new ImageIcon(el.second));
 					}
 				} else {
-					districtOverlayView.setIcon(new ImageIcon(el.first));
+					districtOverlayView.setIcon(new ImageIcon(el.second));
 				}
 				}
 				
@@ -367,10 +367,10 @@ public class GUI extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					tabZoom3 = Math.max(1, tabZoom3-1);
-					el.first = map.drawVoters(tabZoom3);
+					el.second = map.drawVoters(tabZoom3);
 					for (int i=0; i < activeDistricts.size(); i++)
-						el.first=map.drawDistrict(tabZoom3, activeDistricts.get(i),el.first,i,(int)districtSelection.get(0).getValue() + (int)districtSelection.get(1).getValue()<=5);
-					districtOverlayView.setIcon(new ImageIcon(el.first));
+						el.second=map.drawDistrict(tabZoom3, activeDistricts.get(i),el.second,i,(int)districtSelection.get(0).getValue() + (int)districtSelection.get(1).getValue()<=5);
+					districtOverlayView.setIcon(new ImageIcon(el.second));
 					districtOverlayView.repaint();
 					districtOverlayView.revalidate();
 				}
@@ -380,10 +380,10 @@ public class GUI extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					tabZoom3++;
-					el.first = map.drawVoters(tabZoom3);
+					el.second = map.drawVoters(tabZoom3);
 					for (int i=0; i < activeDistricts.size(); i++)
-						el.first=map.drawDistrict(tabZoom3, activeDistricts.get(i),el.first,i,(int)districtSelection.get(0).getValue() + (int)districtSelection.get(1).getValue()<=5);
-					districtOverlayView.setIcon(new ImageIcon(el.first));
+						el.second=map.drawDistrict(tabZoom3, activeDistricts.get(i),el.second,i,(int)districtSelection.get(0).getValue() + (int)districtSelection.get(1).getValue()<=5);
+					districtOverlayView.setIcon(new ImageIcon(el.second));
 					districtOverlayView.repaint();
 					districtOverlayView.revalidate();
 				}
