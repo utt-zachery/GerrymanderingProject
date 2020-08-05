@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -56,7 +56,7 @@ public class GUI extends JFrame {
 		JPanel headPane = new JPanel(new FlowLayout());
 		
 		
-		JLabel header1 = new JLabel("Party Information", SwingConstants.CENTER);
+		JLabel header1 = new JLabel("<html><b>Party Information</b></html>", SwingConstants.CENTER);
 		headPane.add(header1);
 		mainpane.add(headPane);
 		
@@ -65,8 +65,8 @@ public class GUI extends JFrame {
 		final List<JLabel> currentLabels = new ArrayList<JLabel>();
 		final List<JSpinner> districtSelection = new ArrayList<JSpinner>();
 		
-		mainpane.add(partyFactory(majorityParty.partyColor, majorityParty.partyName, currentList,currentLabels, districtSelection));
-		mainpane.add(partyFactory(minorityParty.partyColor, minorityParty.partyName, currentList,currentLabels, districtSelection));
+		mainpane.add(partyFactory(majorityParty, currentList,currentLabels, districtSelection));
+		mainpane.add(partyFactory(minorityParty, currentList,currentLabels, districtSelection));
 		
 		
 		
@@ -465,18 +465,28 @@ public class GUI extends JFrame {
 		this.tabZoom3 = mainview.getZoomFactor();
 	}
 	
-	public JPanel partyFactory(Color innerColor, String partyName, List<JSlider> currentList,List<JLabel> currentLabels, List<JSpinner> districtSelection) {
+	public JPanel partyFactory(Party party, List<JSlider> currentList,List<JLabel> currentLabels, List<JSpinner> districtSelection) {
 		JPanel party1Holder = new JPanel();
 		BoxLayout party1 = new BoxLayout(party1Holder, BoxLayout.X_AXIS);
 		party1Holder.setLayout(party1);
 		JTextField partyname = new JTextField(25);
-		partyname.setText(partyName);
+		partyname.setText(party.partyName);
 		
 		party1Holder.add(partyname);
 		JButton colorChooser = new JButton("     ");
 		colorChooser.setFocusPainted(false);
-		colorChooser.setBackground(innerColor);
-		colorChooser.setBorder(BorderFactory.createLineBorder(Color.black,2));
+		colorChooser.setBackground(party.partyColor);
+		colorChooser.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Color newColor = JColorChooser.showDialog(party1Holder, "Party Color", colorChooser.getBackground());
+				colorChooser.setBackground(newColor);
+				party.partyColor = newColor;
+			}
+			
+		});
+		
 		party1Holder.add((Box.createRigidArea(new Dimension(5, 0))));
 		party1Holder.add(colorChooser);
 		

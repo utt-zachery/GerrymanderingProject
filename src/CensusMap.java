@@ -109,6 +109,7 @@ public class CensusMap {
 	    return b;
 	}
 	
+	//Makes a deep copy and draws district colors ontop as an overlay
 	public BufferedImage drawEdges(BufferedImage map, int pixelScale, Chain districts) {
 		BufferedImage toReturn = copyImage(map);
 		Graphics2D painter = toReturn.createGraphics();
@@ -136,6 +137,8 @@ public class CensusMap {
 			return toSave;
 	}
 	
+	
+	//Draws one district on top of a particular image
 	public BufferedImage drawDistrict(int pixelScale,Chain district, BufferedImage backdrop, int index, boolean goodColors) {
 		Graphics2D painter = backdrop.createGraphics();
 		
@@ -156,6 +159,8 @@ public class CensusMap {
 	
 	public void addVoter(int x, int y, Party party) {
 		int addressHash = x + width*y;
+		// if adjacency list
+		
 		AbstractNode toAdd = new AdjacencyListNode(party,x,y);
 		censusData.put(addressHash, toAdd);
 	}
