@@ -236,7 +236,8 @@ public class GUI extends JFrame {
 					i++;
 				}
 				
-				ExportableMomento toSave = new ExportableMomento(partyList[iterMin], partyList[iterCode], mainview.getData(), currentList.get(0).getValue(), currentList.get(1).getValue());
+				
+				ExportableMomento toSave = new ExportableMomento(partyList[iterMin], partyList[iterCode], mainview.getData(), currentList.get(0).getValue(), currentList.get(1).getValue(),mainview.getRemainingVoters());
 				toSave.export("activeMap.map");
 			}
 			
@@ -249,6 +250,9 @@ public class GUI extends JFrame {
 				ExportableMomento toLoad = ExportableMomento.importMap("activeMap.map");
 				currentList.get(0).setValue(toLoad.getPercentageParty1());
 				currentList.get(1).setValue(toLoad.getPercentageParty2());
+				
+				remaining.setText(toLoad.getVotersRemaining() + " voters remaining");
+				mainview.setRemainingVoters(toLoad.getVotersRemaining());
 				
 				int partyCap = (int)Math.round(map.getMaxVoter() * (double)Integer.min(toLoad.getPercentageParty1(), toLoad.getPercentageParty2()) / 100.0);
 				mainview.importMap(toLoad.getMinorityParty(), toLoad.getMajorityParty(), toLoad.getPaneData(), partyCap);
@@ -316,12 +320,11 @@ public class GUI extends JFrame {
 			JButton zout3 = new JButton("Zoom Out");
 			
 			JButton zin3 = new JButton("Zoom In");
-			JButton export3 = new JButton("Export");
+			
 			
 			JPanel tabView3 = new JPanel(new BorderLayout());
 			buttonPane3.add(zout3);
 			buttonPane3.add(zin3);
-			buttonPane3.add(export3);
 			JLabel districtOverlayView = new JLabel();
 			
 			districtOverlayView.addMouseMotionListener(new MouseMotionListener() {

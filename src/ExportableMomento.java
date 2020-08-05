@@ -15,15 +15,17 @@ public class ExportableMomento implements Serializable {
 	private Map<Integer, Party> paneData;
 	private int percentageParty1;
 	private int percentageParty2;
+	private int votersRemaining;
 	
 	public ExportableMomento() {};
 	
-	public ExportableMomento(Party minorityParty, Party majorityParty, Map<Integer, Party> paneData, int percentageParty1, int percentageParty2) {
+	public ExportableMomento(Party minorityParty, Party majorityParty, Map<Integer, Party> paneData, int percentageParty1, int percentageParty2, int votersRemaining) {
 		this.minorityParty=minorityParty;
 		this.majorityParty=majorityParty;
 		this.paneData=paneData;
 		this.percentageParty1=percentageParty1;
 		this.percentageParty2=percentageParty2;
+		this.votersRemaining=votersRemaining;
 	}
 	
 	public static ExportableMomento importMap(String fileName) {
@@ -86,4 +88,7 @@ public class ExportableMomento implements Serializable {
 		return percentageParty2;
 	}
 	
+	public int getVotersRemaining() {
+		return this.votersRemaining;
+	}
 }

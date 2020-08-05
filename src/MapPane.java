@@ -76,6 +76,11 @@ public class MapPane extends JPanel{
 	public int getRemainingVoters() {
 		return this.partyCap-this.otherParty;
 	}
+	
+	public void setRemainingVoters(int remainingVoters) {
+		this.otherParty = this.partyCap-remainingVoters;
+	}
+	
 	public Map<Integer, Party> getData() {
 		return this.paneData;
 	}
