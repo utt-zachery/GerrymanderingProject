@@ -7,14 +7,18 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -29,6 +33,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class GUI extends JFrame {
 	
@@ -312,6 +317,33 @@ public class GUI extends JFrame {
 		paneMe.add(districtsImage, BorderLayout.NORTH);
 		JScrollPane districtPan = new JScrollPane(paneMe);
 	
+		final JFrame gui = this;
+		
+		exportButton2.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setDialogTitle("Save District Map");   
+				 
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("Image File", "png");
+				fileChooser.setFileFilter(filter);
+				
+				int userSelection = fileChooser.showSaveDialog(gui);
+				 
+				if (userSelection == JFileChooser.APPROVE_OPTION) {
+				    File fileToSave = fileChooser.getSelectedFile();
+				    
+				    try {
+						ImageIO.write(el.first, "png", new File(fileToSave.getPath() + ".png"));
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+			
+		});
 		districtMap.add(districtPan, BorderLayout.CENTER);
 		
 		
