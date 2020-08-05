@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -26,15 +27,17 @@ public class ExecuteListener implements Runnable {
 	private JButton executeButton;
 	private JLabel districtOveralyView;
 	private List<JSpinner> districtSelection;
+	private JComboBox<String> graphOptions;
 	
 	BufferedImage first;
 	BufferedImage second;
 	
 	public ExecuteListener(List<JSlider> currentList, JLabel districtsImage, CensusMap map, MapPane mainview,
 			Party[] partyList, List<Chain> activeDistricts, JTabbedPane maintabs, JProgressBar executeProgress,
-			JPanel innerPane, JButton executeButton, JLabel districtOveralyView, List<JSpinner> districtSelection) {
+			JPanel innerPane, JButton executeButton, JLabel districtOveralyView, List<JSpinner> districtSelection, JComboBox<String> graphOptions) {
 		
 		super();
+		this.graphOptions=graphOptions;
 		this.districtOveralyView=districtOveralyView;
 		this.currentList = currentList;
 		this.districtsImage = districtsImage;
@@ -63,7 +66,7 @@ public class ExecuteListener implements Runnable {
 			q++;
 		}
 		
-		map.buildMap(mainview);
+		map.buildMap(mainview, graphOptions.getSelectedIndex() == 0);
 		
 		int otherIndex = (iterCode ==0) ? 1:0;
 		

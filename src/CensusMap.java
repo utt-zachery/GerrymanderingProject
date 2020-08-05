@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import javax.imageio.ImageIO;
 
 public class CensusMap {
@@ -32,12 +31,12 @@ public class CensusMap {
 		return this.height;
 	}
 	
-	public void buildMap(MapPane input) {
+	public void buildMap(MapPane input, boolean isAdjList) {
 		
 		this.censusData.clear();
 		
 		for (Map.Entry<Integer,Party> entry : input.getData().entrySet()) {
-			this.addVoter(entry.getKey() / input.getCensusMap().getWidth(), entry.getKey() % input.getCensusMap().getWidth(), entry.getValue());
+			this.addVoter(entry.getKey() / input.getCensusMap().getWidth(), entry.getKey() % input.getCensusMap().getWidth(), entry.getValue(), isAdjList);
 		}
 		
 	}
@@ -157,11 +156,16 @@ public class CensusMap {
 	}
 	
 	
-	public void addVoter(int x, int y, Party party) {
+	public void addVoter(int x, int y, Party party, boolean isList) {
 		int addressHash = x + width*y;
 		// if adjacency list
 		
-		AbstractNode toAdd = new AdjacencyListNode(party,x,y);
+		AbstractNode toAdd;
+		if (isList)
+			toAdd = new AdjacencyListNode(party,x,y);
+		else
+			toAdd = new AdjacencyMatrixNode(party,x,y,this);
+		
 		censusData.put(addressHash, toAdd);
 	}
 	

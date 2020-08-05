@@ -11,13 +11,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -50,6 +50,27 @@ public class GUI extends JFrame {
 		this.map = map;
 		this.activeDistricts = new ArrayList<Chain>();
 		JPanel mainpane = new JPanel();
+		
+		JPanel bigPane = new JPanel();
+		BoxLayout horizontalOut = new BoxLayout(bigPane, BoxLayout.X_AXIS);
+		bigPane.setLayout(horizontalOut);
+		
+		JPanel radios = new JPanel();
+		
+		BoxLayout bnl = new BoxLayout(radios, BoxLayout.PAGE_AXIS);
+		radios.setLayout(bnl);
+
+		JPanel comboHolder = new JPanel(new FlowLayout(FlowLayout.LEFT,10,25));
+		String[] petStrings = { "Adjacency List", "Adjacency Matrix"};
+		final JComboBox<String> optList = new JComboBox<String>(petStrings);
+		optList.setSelectedIndex(0);
+		
+		comboHolder.add(optList);
+		radios.add(comboHolder);
+
+		
+		bigPane.add(comboHolder);
+	
 		BoxLayout mainLayout = new BoxLayout(mainpane, BoxLayout.PAGE_AXIS);
 		mainpane.setLayout(mainLayout);
 		
@@ -65,13 +86,15 @@ public class GUI extends JFrame {
 		final List<JLabel> currentLabels = new ArrayList<JLabel>();
 		final List<JSpinner> districtSelection = new ArrayList<JSpinner>();
 		
+		
 		mainpane.add(partyFactory(majorityParty, currentList,currentLabels, districtSelection));
 		mainpane.add(partyFactory(minorityParty, currentList,currentLabels, districtSelection));
 		
 		
 		
 		innerPane = new JPanel(new BorderLayout());
-		innerPane.add(mainpane, BorderLayout.NORTH);
+		bigPane.add(mainpane);
+		innerPane.add(bigPane, BorderLayout.NORTH);
 		
 		
 		
@@ -452,7 +475,7 @@ public class GUI extends JFrame {
 				maintabs.setEnabledAt(1, false);
 				maintabs.setEnabledAt(2, false);
 				
-				el = new ExecuteListener(currentList, districtsImage, map, mainview, partyList, activeDistricts, maintabs, executeProgress, innerPane, execute,districtOverlayView, districtSelection);
+				el = new ExecuteListener(currentList, districtsImage, map, mainview, partyList, activeDistricts, maintabs, executeProgress, innerPane, execute,districtOverlayView, districtSelection, optList);
 				new Thread(el).start();;
 				
 			}
