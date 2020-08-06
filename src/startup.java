@@ -47,11 +47,8 @@ public class startup {
 	    }
 		}
 		
-		
-	
-		
-		int censusWidth = 200;
-		int censusHeight = 200;
+		int censusWidth = 320;
+		int censusHeight = 320;
 		
 		Party democrat = new Party("Democratic Party", java.awt.Color.blue);
 		Party republican = new Party("Republican Party", java.awt.Color.red);

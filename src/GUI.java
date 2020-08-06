@@ -448,9 +448,15 @@ public class GUI extends JFrame {
 			});
 		// End Tab 3
 		
+			
+		JPanel electionResults = new JPanel();
+		
+			
+		
 		maintabs.addTab("Census Map", holder);
 		maintabs.addTab("Districts Map", districtMap);
 		maintabs.addTab("District-Census X-Ray", tabView3);
+		maintabs.addTab("Elections Result", electionResults);
 		
 		innerPane.add(maintabs, BorderLayout.CENTER);
 		
@@ -475,7 +481,7 @@ public class GUI extends JFrame {
 				maintabs.setEnabledAt(1, false);
 				maintabs.setEnabledAt(2, false);
 				
-				el = new ExecuteListener(currentList, districtsImage, map, mainview, partyList, activeDistricts, maintabs, executeProgress, innerPane, execute,districtOverlayView, districtSelection, optList);
+				el = new ExecuteListener(currentList, districtsImage, map, mainview, partyList, activeDistricts, maintabs, executeProgress, innerPane, execute,districtOverlayView, districtSelection, optList, electionResults);
 				new Thread(el).start();;
 				
 			}
@@ -545,4 +551,6 @@ public class GUI extends JFrame {
 		party1Holder.add(totalPane);
 		return party1Holder;
 	}
+	
+	
 }

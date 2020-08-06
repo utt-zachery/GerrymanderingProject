@@ -28,13 +28,14 @@ public class ExecuteListener implements Runnable {
 	private JLabel districtOveralyView;
 	private List<JSpinner> districtSelection;
 	private JComboBox<String> graphOptions;
+	private JPanel electionResults;
 	
 	BufferedImage first;
 	BufferedImage second;
 	
 	public ExecuteListener(List<JSlider> currentList, JLabel districtsImage, CensusMap map, MapPane mainview,
 			Party[] partyList, List<Chain> activeDistricts, JTabbedPane maintabs, JProgressBar executeProgress,
-			JPanel innerPane, JButton executeButton, JLabel districtOveralyView, List<JSpinner> districtSelection, JComboBox<String> graphOptions) {
+			JPanel innerPane, JButton executeButton, JLabel districtOveralyView, List<JSpinner> districtSelection, JComboBox<String> graphOptions, JPanel electionResults) {
 		
 		super();
 		this.graphOptions=graphOptions;
@@ -42,6 +43,7 @@ public class ExecuteListener implements Runnable {
 		this.currentList = currentList;
 		this.districtsImage = districtsImage;
 		this.map = map;
+		this.electionResults=electionResults;
 		this.mainview = mainview;
 		this.partyList = partyList;
 		this.activeDistricts = activeDistricts;
@@ -102,8 +104,19 @@ public class ExecuteListener implements Runnable {
 		districtsImage.setIcon(new ImageIcon(first));
 		districtsImage.repaint();
 		districtsImage.revalidate();
+		
+		JPanel toAdd = printResult(districts,  districts[0],  map);
+		this.electionResults.add(toAdd);
+		
+		this.electionResults.repaint();
+		this.electionResults.revalidate();
+		
 		maintabs.setEnabledAt(1, true);
 		maintabs.setEnabledAt(2, true);
+		maintabs.setEnabledAt(3, true);
+		
+		
+		
 		this.first=first;
 		this.second = second;
 		districtOveralyView.setIcon(new ImageIcon(first));
@@ -113,5 +126,17 @@ public class ExecuteListener implements Runnable {
 		executeButton.revalidate();
 		innerPane.repaint();
 		innerPane.revalidate();
+	}
+	
+	public JPanel printResult(Chain[] districts, Chain district, CensusMap map) {
+		JPanel toReturn = new JPanel();
+		JLabel imageControl = new JLabel();
+		
+		BufferedImage allResult = new BufferedImage(map.getWidth(), map.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		map.drawResult(allResult, 1, districts, district);
+		imageControl.setIcon(new ImageIcon(allResult));
+		toReturn.add(imageControl);
+		
+		return toReturn;
 	}
 }
