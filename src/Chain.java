@@ -1,6 +1,7 @@
 import java.util.Iterator;
 import java.util.LinkedList;
 
+//The Chain class represents a district
 public class Chain {
 
 	private LinkedList<AbstractNode> chain;
@@ -17,6 +18,8 @@ public class Chain {
 		return this.chain.size();
 	}
 	
+	
+	//Returns the voter in the immediate vacinity of the district that, if added, would benefit the winning party the most
 	public AbstractNode findBestVoter() {
 		
 		int bestNetIndex = Integer.MIN_VALUE;
@@ -34,6 +37,7 @@ public class Chain {
 		return bestNode;
 	}
 	
+	//Returns the voter in the immediate vacinity of the district that, if added, would hurt the current party the most
 	public AbstractNode findWorstVoter() {
 		
 		int worstNetIndex = Integer.MAX_VALUE;
@@ -68,6 +72,7 @@ public class Chain {
 		
 	}
 	
+	//Returns the number of voters in the district who affiliate with a particular party
 	public int getPartyCount() {
 		int toreturn=0;
 		for (AbstractNode n: this.chain)
@@ -75,6 +80,7 @@ public class Chain {
 				toreturn++;
 		return toreturn;
 	}
+	
 	public int getNetScore() {
 		return this.netScore;
 	}

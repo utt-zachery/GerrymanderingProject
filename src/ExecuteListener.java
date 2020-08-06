@@ -17,6 +17,7 @@ import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 
+//GUI class that handles executing the algorithm in another thread
 public class ExecuteListener implements Runnable {
 
 	private List<JSlider> currentList;
@@ -161,6 +162,7 @@ public class ExecuteListener implements Runnable {
 		innerPane.revalidate();
 	}
 
+	//Draws results
 	JPanel resultsFactory(Chain district, CensusMap map, int districtIndex, Party expectedWin, Party expectedLose) {
 		Party win;
 		Party loss;

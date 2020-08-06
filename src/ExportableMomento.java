@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Map;
 
+//Implements the Momento pattern and allows the current census map to be saved
 public class ExportableMomento implements Serializable {
 
 	private static final long serialVersionUID = 1L;

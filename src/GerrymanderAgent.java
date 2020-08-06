@@ -2,6 +2,7 @@ import java.util.List;
 
 import javax.swing.JProgressBar;
 
+//Performs the Gerrymandering operation
 public class GerrymanderAgent {
 	
 	protected CensusMap census;
@@ -12,6 +13,7 @@ public class GerrymanderAgent {
 		this.census = census;
 	}
 	
+	//Adds voters systematically to build chains that consist of only one party with voters who hurt the district the least
 	public Chain[] growChains(PartyDistricts[] districtHolder) {
 		System.out.println("Peek: " + districtHolder[0].chains.peek().getNetScore());
 		

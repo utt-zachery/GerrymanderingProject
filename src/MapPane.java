@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+//Displays the current censusmap and allows the user to interact
 public class MapPane extends JPanel{
 	private static final long serialVersionUID = 1L;
 	private int zoomFactor;

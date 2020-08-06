@@ -9,8 +9,10 @@ import java.util.Iterator;
 import java.util.Map;
 import javax.imageio.ImageIO;
 
+//This class stores the voter data drawn by the user in a map, given by a hashcode that depends on the x & y coordinate of the voter's locaction
 public class CensusMap {
 
+	//For drawing districts
 	private static final Color COLORS[] = {new Color(239, 71, 111), new Color(255, 209, 102), new Color(6, 214, 160), new Color(17, 138, 178), new Color(7, 59, 76)};
 	private static final Color COLORS2[] = {new Color(0, 0, 128), new Color(0, 128, 128), new Color(0, 130, 200), new Color(128, 0, 0), new Color(128, 128, 0), new Color(128, 128, 128), new Color(145, 30, 180), new Color(170, 110, 40), new Color(170, 255, 195), new Color(210, 245, 60), new Color(220, 190, 255), new Color(230, 25, 75), new Color(240, 50, 230), new Color(245, 130, 48), new Color(250, 190, 212), new Color(255, 215, 180), new Color(255, 225, 25), new Color(255, 250, 200), new Color(255, 255, 255), new Color(60, 180, 75), new Color(70, 240, 240)};
 	private Map<Integer, AbstractNode> censusData;
@@ -31,6 +33,7 @@ public class CensusMap {
 		return this.height;
 	}
 	
+	//Initalization
 	public void buildMap(MapPane input, boolean isAdjList) {
 		
 		this.censusData.clear();
@@ -41,6 +44,7 @@ public class CensusMap {
 		
 	}
 	
+	//Builds the graph by noting nodes who are next to each other
 	public void getNeighbors() {
 		for (int x=0; x < width; x++) {
 			for (int y=0; y < height; y++) {
@@ -82,6 +86,7 @@ public class CensusMap {
 		}
 	}
 	
+	//Saves the current Census map
 	public void saveImage(String fileName, int pixelScale) {
 		BufferedImage toSave = new BufferedImage(this.width * pixelScale, this.height * pixelScale, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D painter = toSave.createGraphics();
@@ -126,6 +131,7 @@ public class CensusMap {
 		return toReturn;
 	}
 	
+	//Draws each voter as a rectangle representing their party
 	public BufferedImage drawVoters(int pixelScale) {
 		BufferedImage toSave = new BufferedImage(this.width * pixelScale, this.height * pixelScale, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D painter = toSave.createGraphics();
@@ -155,6 +161,7 @@ public class CensusMap {
 			return backdrop;
 	}
 	
+	//Draws only an outline of each district
 	public void drawOutline(BufferedImage map, int pixelScale, Chain districts) {
 		Graphics2D painter = map.createGraphics();
 		Iterator<AbstractNode> allNodes = districts.getChainIterator();
@@ -167,6 +174,7 @@ public class CensusMap {
 		}
 	}
 	
+	//Draws the district in question as a block color of the winning party
 	public BufferedImage drawResults(BufferedImage map, int pixelScale, Chain districts, Color winningPartyColor) {
 		BufferedImage toReturn = copyImage(map);
 		Graphics2D painter = toReturn.createGraphics();
@@ -179,6 +187,7 @@ public class CensusMap {
 		return toReturn;
 	}
 	
+	//Adds a voter to the HashMap
 	public void addVoter(int x, int y, Party party, boolean isList) {
 		int addressHash = x + width*y;
 		// if adjacency list

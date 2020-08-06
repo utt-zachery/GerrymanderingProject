@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import javax.swing.JPanel;
 
+//Maps mouse drags to voter addresses
 public class MouseProcesser implements MouseListener, MouseMotionListener {
 
 	private MapPane mainPane;

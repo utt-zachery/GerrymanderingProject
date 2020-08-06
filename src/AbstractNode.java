@@ -1,5 +1,8 @@
 import java.util.List;
 
+
+//Abstract Base class that implements the Strategy pattern to allow for easy substiution from Adjacency List to Adjacency Matrix
+
 public abstract class AbstractNode {
 
 	private Party party;
@@ -42,6 +45,7 @@ public abstract class AbstractNode {
 		return isInDistrict;
 	}
 	
+	//Depends on whether the node is a list or a matrix
 	public abstract void addNeighbor(AbstractNode toAdd);
 	public abstract List<AbstractNode> getNeighbors();
 	

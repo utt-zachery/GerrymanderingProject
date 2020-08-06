@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
+//List implementation of the graph
 public class AdjacencyListNode extends AbstractNode {
 
 	private List<AbstractNode> neighborHood;
