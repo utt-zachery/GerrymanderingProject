@@ -25,16 +25,18 @@ public class ExecuteListener implements Runnable {
 	private JPanel innerPane;
 	private JButton executeButton;
 	private JLabel districtOveralyView;
+	private JLabel districtInfoView;
 	private List<JSpinner> districtSelection;
 	
 	BufferedImage first;
 	
 	public ExecuteListener(List<JSlider> currentList, JLabel districtsImage, CensusMap map, MapPane mainview,
 			Party[] partyList, List<Chain> activeDistricts, JTabbedPane maintabs, JProgressBar executeProgress,
-			JPanel innerPane, JButton executeButton, JLabel districtOveralyView, List<JSpinner> districtSelection) {
+			JPanel innerPane, JButton executeButton, JLabel districtOveralyView, JLabel districtInfoView, List<JSpinner> districtSelection) {
 		
 		super();
 		this.districtOveralyView=districtOveralyView;
+		this.districtInfoView = districtInfoView;
 		this.currentList = currentList;
 		this.districtsImage = districtsImage;
 		this.map = map;
@@ -97,8 +99,10 @@ public class ExecuteListener implements Runnable {
 		districtsImage.revalidate();
 		maintabs.setEnabledAt(1, true);
 		maintabs.setEnabledAt(2, true);
+		maintabs.setEnabledAt(3, true);
 		this.first=first;
 		districtOveralyView.setIcon(new ImageIcon(first));
+		districtInfoView.setIcon(new ImageIcon(first));
 		innerPane.remove(executeProgress);
 		innerPane.add(executeButton, BorderLayout.SOUTH);
 		executeButton.repaint();

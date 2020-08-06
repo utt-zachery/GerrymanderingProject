@@ -125,7 +125,20 @@ public class CensusMap {
 		
 		return toReturn;
 	}
-	
+	public BufferedImage drawResults(BufferedImage map, int pixelScale, Chain districts) {
+		BufferedImage toReturn = copyImage(map);
+		Graphics2D painter = toReturn.createGraphics();
+		Iterator<Node> allNodes = districts.getChainIterator();
+		while (allNodes.hasNext()) {
+			Node next = allNodes.next();
+			next.detectEdge();
+			if (next.isDistrictEdge() || next.x ==0 || next.y==0 || next.x == this.width-1 || next.y == this.height - 1)
+				painter.setPaint(Color.black);
+
+			painter.fillRect(next.x*pixelScale, next.y*pixelScale, pixelScale, pixelScale);
+		}
+		return toReturn;
+	}
 	public BufferedImage drawVoters(int pixelScale) {
 		BufferedImage toSave = new BufferedImage(this.width * pixelScale, this.height * pixelScale, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D painter = toSave.createGraphics();

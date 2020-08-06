@@ -38,8 +38,9 @@ public class GUI extends JFrame {
 	private List<Chain> activeDistricts;
 	private int mapViewer;
 	private int tabZoom3;
+	private int tabZoom4;
 	ExecuteListener el;
-	
+
 	
 	public GUI(final CensusMap map,Party majorityParty, Party minorityParty) {
 		this.map = map;
@@ -340,7 +341,7 @@ public class GUI extends JFrame {
 					if (mappedY >= 0 && mappedY < map.getHeight()) {
 						int indexHash = mappedX + map.getWidth() * mappedY;
 						Node n = map.getVoter(indexHash);
-						
+
 						if (n != null) {
 							BufferedImage toDraw = map.drawEdges(el.first, tabZoom3, n.getDistrict());
 							districtOverlayView.setIcon(new ImageIcon(toDraw));
@@ -389,11 +390,88 @@ public class GUI extends JFrame {
 				}
 			});
 		// End Tab 3
-		
+		// Tab 4: District Info View
+		final JPanel buttonPane4 = new JPanel(new FlowLayout());
+		JButton zout4 = new JButton("Zoom Out");
+
+		JButton zin4 = new JButton("Zoom In");
+		JButton export4 = new JButton("Export");
+
+		JPanel tabView4 = new JPanel(new BorderLayout());
+		buttonPane4.add(zout4);
+		buttonPane4.add(zin4);
+		buttonPane4.add(export4);
+		JLabel districtInfoView = new JLabel();
+
+		districtInfoView.addMouseMotionListener(new MouseMotionListener() {
+
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				int mappedX = e.getX() / tabZoom4;
+				int mappedY = e.getY() / tabZoom4;
+				if (mappedX >= 0 && mappedX <  map.getWidth()) {
+					if (mappedY >= 0 && mappedY < map.getHeight()) {
+						int indexHash = mappedX + map.getWidth() * mappedY;
+						Node n = map.getVoter(indexHash);
+
+						if (n != null) {
+								BufferedImage toDraw = map.drawResults(el.first, tabZoom4, n.getDistrict());
+								districtInfoView.setIcon(new ImageIcon(toDraw));
+								districtInfoView.repaint();
+								districtInfoView.revalidate();
+						}
+					} else {
+						districtInfoView.setIcon(new ImageIcon(el.first));
+					}
+				} else {
+					districtInfoView.setIcon(new ImageIcon(el.first));
+				}
+			}
+
+		});
+
+		JPanel paneInfoView = new JPanel(new BorderLayout());
+		paneInfoView.add(districtInfoView, BorderLayout.NORTH);
+		JScrollPane districtInfoPaner = new JScrollPane(paneInfoView);
+		tabView4.add(buttonPane4, BorderLayout.NORTH);
+		tabView4.add(districtInfoPaner, BorderLayout.CENTER);
+
+		zout4.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tabZoom4 = Math.max(1, tabZoom4-1);
+				el.first = map.drawVoters(tabZoom4);
+				for (int i=0; i < activeDistricts.size(); i++)
+					el.first=map.drawDistrict(tabZoom4, activeDistricts.get(i),el.first,i,(int)districtSelection.get(0).getValue() + (int)districtSelection.get(1).getValue()<=5);
+				districtInfoView.setIcon(new ImageIcon(el.first));
+				districtInfoView.repaint();
+				districtInfoView.revalidate();
+			}
+		});
+
+		zin4.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tabZoom4++;
+				el.first = map.drawVoters(tabZoom4);
+				for (int i=0; i < activeDistricts.size(); i++)
+					el.first=map.drawDistrict(tabZoom4, activeDistricts.get(i),el.first,i,(int)districtSelection.get(0).getValue() + (int)districtSelection.get(1).getValue()<=5);
+				districtInfoView.setIcon(new ImageIcon(el.first));
+				districtInfoView.repaint();
+				districtInfoView.revalidate();
+			}
+		});
 		maintabs.addTab("Census Map", holder);
 		maintabs.addTab("Districts Map", districtMap);
 		maintabs.addTab("District-Census X-Ray", tabView3);
-		
+		maintabs.addTab("District Information", tabView4);
+
 		innerPane.add(maintabs, BorderLayout.CENTER);
 		
 		JButton execute = new JButton("Execute");
@@ -416,9 +494,9 @@ public class GUI extends JFrame {
 				
 				maintabs.setEnabledAt(1, false);
 				maintabs.setEnabledAt(2, false);
-				
-				el = new ExecuteListener(currentList, districtsImage, map, mainview, partyList, activeDistricts, maintabs, executeProgress, innerPane, execute,districtOverlayView, districtSelection);
-				new Thread(el).start();;
+				maintabs.setEnabledAt(3, false);
+				el = new ExecuteListener(currentList, districtsImage, map, mainview, partyList, activeDistricts, maintabs, executeProgress, innerPane, execute,districtOverlayView, districtInfoView, districtSelection);
+				new Thread(el).start();
 				
 			}
 		});
@@ -428,6 +506,7 @@ public class GUI extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.mapViewer = mainview.getZoomFactor();
 		this.tabZoom3 = mainview.getZoomFactor();
+		this.tabZoom4 = mainview.getZoomFactor();
 	}
 	
 	public JPanel partyFactory(Color innerColor, String partyName, List<JSlider> currentList,List<JLabel> currentLabels, List<JSpinner> districtSelection) {
