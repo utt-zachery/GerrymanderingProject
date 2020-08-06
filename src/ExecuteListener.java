@@ -189,8 +189,9 @@ public class ExecuteListener implements Runnable {
 		innerPane.add(districtImage);
 		
 		
+		String votePercentage = String.format("%.2f", (100*((float)PC / (float)district.getSize())));
 		
-		String htmlString = "<html> <font size='5'><b>District "+ (districtIndex +1) + "</b><br/> <i> Total Votes: " + district.getSize() + "</i> <p>" + win.partyName + ": " + PC + "</p><p>" + loss.partyName + ": " + (district.getSize() - PC) + "</p> <br> <p>" + win.partyName +" wins with " + (int)Math.round(100*((double)PC / (double)district.getSize())) + "% of the vote! </p></font> </html>";
+		String htmlString = "<html> <font size='5'><b>District "+ (districtIndex +1) + "</b><br/> <i> Total Votes: " + district.getSize() + "</i> <p>" + win.partyName + ": " + PC + "</p><p>" + loss.partyName + ": " + (district.getSize() - PC) + "</p> <br> <p>" + win.partyName +" wins with " + votePercentage + "% of the vote! </p></font> </html>";
 		
 		JLabel text = new JLabel(htmlString);
 		innerPane.add(Box.createRigidArea(new Dimension(20, 0)));

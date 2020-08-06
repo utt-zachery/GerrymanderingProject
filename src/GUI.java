@@ -454,13 +454,12 @@ public class GUI extends JFrame {
 		JButton zout4 = new JButton("Zoom Out");
 
 		JButton zin4 = new JButton("Zoom In");
-		JButton export4 = new JButton("Export");
+		
 
 		JPanel tabView4 = new JPanel(new BorderLayout());
 		buttonPane4.add(zout4);
 		buttonPane4.add(zin4);
-		buttonPane4.add(export4);
-		
+	
 		
 
 		JPanel paneInfoView = new JPanel(new BorderLayout());
