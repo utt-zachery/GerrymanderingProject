@@ -19,6 +19,4 @@ public class AdjacencyListNode extends AbstractNode {
 	public List<AbstractNode> getNeighbors() {
 		return neighborHood;
 	}
-
-
 }

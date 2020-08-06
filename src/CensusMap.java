@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
 
@@ -156,24 +155,28 @@ public class CensusMap {
 			return backdrop;
 	}
 	
-	
-	
-	public BufferedImage drawResult(BufferedImage map, int pixelScale, Chain[] allDistricts, Chain toDraw) {
+	public void drawOutline(BufferedImage map, int pixelScale, Chain districts) {
 		Graphics2D painter = map.createGraphics();
-		for (Chain district : allDistricts) {
-		Iterator<AbstractNode> allNodes = district.getChainIterator();
+		Iterator<AbstractNode> allNodes = districts.getChainIterator();
+		painter.setColor(Color.black);
 		while (allNodes.hasNext()) {
-				AbstractNode next = allNodes.next();
-				next.detectEdge();
-				if (next.isDistrictEdge() || next.getX() ==0 || next.getY()==0 || next.getX() == this.width-1 || next.getY() == this.height - 1)
-					painter.setPaint(Color.black);
-				else if (district.equals(toDraw))
-					painter.setPaint(district.getChainIterator().next().getParty().partyColor);
-				
-				painter.fillRect(next.getX()*pixelScale, next.getY()*pixelScale, pixelScale, pixelScale);
-			}
+			AbstractNode next = allNodes.next();
+			next.detectEdge();
+			if (next.isDistrictEdge()  || next.getX() ==0 || next.getY()==0 || next.getX() == this.width-1 || next.getY() == this.height - 1)
+			painter.fillRect(next.getX()*pixelScale, next.getY()*pixelScale, pixelScale, pixelScale);
 		}
-		return map;
+	}
+	
+	public BufferedImage drawResults(BufferedImage map, int pixelScale, Chain districts, Color winningPartyColor) {
+		BufferedImage toReturn = copyImage(map);
+		Graphics2D painter = toReturn.createGraphics();
+		Iterator<AbstractNode> allNodes = districts.getChainIterator();
+		while (allNodes.hasNext()) {
+			AbstractNode next = allNodes.next();
+			painter.setColor(winningPartyColor);
+			painter.fillRect(next.getX()*pixelScale, next.getY()*pixelScale, pixelScale, pixelScale);
+		}
+		return toReturn;
 	}
 	
 	public void addVoter(int x, int y, Party party, boolean isList) {

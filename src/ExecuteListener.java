@@ -1,14 +1,18 @@
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
@@ -32,6 +36,7 @@ public class ExecuteListener implements Runnable {
 	
 	BufferedImage first;
 	BufferedImage second;
+	BufferedImage third;
 	
 	public ExecuteListener(List<JSlider> currentList, JLabel districtsImage, CensusMap map, MapPane mainview,
 			Party[] partyList, List<Chain> activeDistricts, JTabbedPane maintabs, JProgressBar executeProgress,
@@ -91,25 +96,55 @@ public class ExecuteListener implements Runnable {
 		
 		BufferedImage first = map.drawVoters(mainview.getZoomFactor());
 		BufferedImage second = map.drawVoters(mainview.getZoomFactor());
+		BufferedImage third = new BufferedImage(map.getWidth(), map.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		
 		for (int i=0; i < districts.length; i++) {
 			first=map.drawDistrict(mainview.getZoomFactor(), districts[i],first,i, districtHolder[0].numDistricts + districtHolder[1].numDistricts <= 5);
 			second=map.drawDistrict(mainview.getZoomFactor(), districts[i],second,i, districtHolder[0].numDistricts + districtHolder[1].numDistricts <= 5);
+			map.drawOutline(third,1,  districts[i]);
 		}
 		
 		System.out.println("Phase 2 Completed: All chains are built");
 		
 		Toolkit.getDefaultToolkit().beep();
 		
+		
+		
 		districtsImage.setIcon(new ImageIcon(first));
 		districtsImage.repaint();
 		districtsImage.revalidate();
 		
-		JPanel toAdd = printResult(districts,  districts[0],  map);
-		this.electionResults.add(toAdd);
 		
-		this.electionResults.repaint();
-		this.electionResults.revalidate();
+		JPanel allResults = new JPanel();
+		JScrollPane godPane = new JScrollPane(allResults);
+		BoxLayout container = new BoxLayout(allResults, BoxLayout.PAGE_AXIS);
+		allResults.setLayout(container);
+		
+		
+		this.first=first;
+		this.second = second;
+		this.third = third;
+		
+		
+		
+		for (int index = 0; index < activeDistricts.size(); index++ ) {
+			Party expectedWin = partyList[0];
+			Party expectedLoss = partyList[1];
+			if (districts[index].getChainIterator().next().getParty().equals(partyList[1])){
+				expectedWin = partyList[1];
+				expectedLoss =  partyList[0];
+			}
+			allResults.add(resultsFactory(districts[index],map,index,expectedWin,expectedLoss));
+			allResults.add(Box.createRigidArea(new Dimension(10,40)));
+			electionResults.removeAll();
+			electionResults.add(godPane);
+			
+		}
+	
+		
+		
+		electionResults.repaint();
+		electionResults.revalidate();
 		
 		maintabs.setEnabledAt(1, true);
 		maintabs.setEnabledAt(2, true);
@@ -117,8 +152,6 @@ public class ExecuteListener implements Runnable {
 		
 		
 		
-		this.first=first;
-		this.second = second;
 		districtOveralyView.setIcon(new ImageIcon(first));
 		innerPane.remove(executeProgress);
 		innerPane.add(executeButton, BorderLayout.SOUTH);
@@ -127,16 +160,42 @@ public class ExecuteListener implements Runnable {
 		innerPane.repaint();
 		innerPane.revalidate();
 	}
-	
-	public JPanel printResult(Chain[] districts, Chain district, CensusMap map) {
-		JPanel toReturn = new JPanel();
-		JLabel imageControl = new JLabel();
+
+	JPanel resultsFactory(Chain district, CensusMap map, int districtIndex, Party expectedWin, Party expectedLose) {
+		Party win;
+		Party loss;
 		
-		BufferedImage allResult = new BufferedImage(map.getWidth(), map.getHeight(), BufferedImage.TYPE_INT_ARGB);
-		map.drawResult(allResult, 1, districts, district);
-		imageControl.setIcon(new ImageIcon(allResult));
-		toReturn.add(imageControl);
+		int PC = district.getPartyCount();
 		
+		if ((double)PC / (double)district.getSize() >= 0.5) {
+			win = expectedWin;
+			loss = expectedLose;
+		}
+		else {
+			win = expectedLose;
+			loss = expectedWin;
+		}
+		
+		JPanel toReturn = new JPanel(new BorderLayout());
+		JLabel districtImage = new JLabel();
+		JPanel innerPane = new JPanel();
+		BoxLayout bl = new BoxLayout(innerPane, BoxLayout.X_AXIS);
+		innerPane.setLayout(bl);
+		
+		BufferedImage distictIdentifier = CensusMap.copyImage(this.third);
+		
+		BufferedImage toDraw = map.drawResults(distictIdentifier, 1,district, win.partyColor);
+		districtImage.setIcon(new ImageIcon(toDraw));
+		innerPane.add(districtImage);
+		
+		
+		
+		String htmlString = "<html> <font size='5'><b>District "+ (districtIndex +1) + "</b><br/> <i> Total Votes: " + district.getSize() + "</i> <p>" + win.partyName + ": " + PC + "</p><p>" + loss.partyName + ": " + (district.getSize() - PC) + "</p> <br> <p>" + win.partyName +" wins with " + (int)Math.round(100*((double)PC / (double)district.getSize())) + "% of the vote! </p></font> </html>";
+		
+		JLabel text = new JLabel(htmlString);
+		innerPane.add(Box.createRigidArea(new Dimension(20, 0)));
+		innerPane.add(text);
+		toReturn.add(innerPane, BorderLayout.NORTH);
 		return toReturn;
 	}
 }

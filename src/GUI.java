@@ -449,14 +449,29 @@ public class GUI extends JFrame {
 		// End Tab 3
 		
 			
-		JPanel electionResults = new JPanel();
+	
+		final JPanel buttonPane4 = new JPanel(new FlowLayout());
+		JButton zout4 = new JButton("Zoom Out");
+
+		JButton zin4 = new JButton("Zoom In");
+		JButton export4 = new JButton("Export");
+
+		JPanel tabView4 = new JPanel(new BorderLayout());
+		buttonPane4.add(zout4);
+		buttonPane4.add(zin4);
+		buttonPane4.add(export4);
 		
-			
 		
+
+		JPanel paneInfoView = new JPanel(new BorderLayout());
+		JScrollPane districtInfoPaner = new JScrollPane(paneInfoView);
+		tabView4.add(buttonPane4, BorderLayout.NORTH);
+		tabView4.add(districtInfoPaner, BorderLayout.CENTER);
+
 		maintabs.addTab("Census Map", holder);
 		maintabs.addTab("Districts Map", districtMap);
 		maintabs.addTab("District-Census X-Ray", tabView3);
-		maintabs.addTab("Elections Result", electionResults);
+		maintabs.addTab("Elections Result", tabView4);
 		
 		innerPane.add(maintabs, BorderLayout.CENTER);
 		
@@ -480,8 +495,9 @@ public class GUI extends JFrame {
 				
 				maintabs.setEnabledAt(1, false);
 				maintabs.setEnabledAt(2, false);
+				maintabs.setEnabledAt(3, false);
 				
-				el = new ExecuteListener(currentList, districtsImage, map, mainview, partyList, activeDistricts, maintabs, executeProgress, innerPane, execute,districtOverlayView, districtSelection, optList, electionResults);
+				el = new ExecuteListener(currentList, districtsImage, map, mainview, partyList, activeDistricts, maintabs, executeProgress, innerPane, execute,districtOverlayView, districtSelection, optList, tabView4);
 				new Thread(el).start();;
 				
 			}
@@ -524,7 +540,7 @@ public class GUI extends JFrame {
 		districtChooser.add(Box.createHorizontalStrut(5));
 		districtChooser.setLayout(b2);
 		
-		SpinnerModel sm = new SpinnerNumberModel(0, 0, 9, 1);
+		SpinnerModel sm = new SpinnerNumberModel(1, 0, 9, 1);
 		JSpinner s = new JSpinner(sm); 
 		districtSelection.add(s);
 		districtChooser.add(new JLabel("Districts To Win: "));
